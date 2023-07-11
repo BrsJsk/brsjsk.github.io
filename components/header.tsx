@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { FaGithubSquare, FaLinkedin } from "react-icons/fa";
+import { FaGithubSquare, FaLinkedin, FaRssSquare } from "react-icons/fa";
 
 const navbarItems = [
   {
@@ -43,13 +43,17 @@ const Header = () => {
       </div>
 
       <div className="flex flex-row">
-        <a href="https://github.com/BrsJsk/">
+        <Link href="https://github.com/BrsJsk/">
           <FaGithubSquare className="w-8 h-8 mr-2" />
-        </a>
+        </Link>
 
-        <a href="https://www.linkedin.com/in/boris-joskic-797a35148">
-          <FaLinkedin className="w-8 h-8" />
-        </a>
+        <Link href="https://www.linkedin.com/in/boris-joskic-797a35148">
+          <FaLinkedin className="w-8 h-8 mr-2" />
+        </Link>
+
+        <Link href="rss.xml">
+          <FaRssSquare className="w-8 h-8 text-orange-500" />
+        </Link>
       </div>
     </section>
   );

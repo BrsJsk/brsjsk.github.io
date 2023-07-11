@@ -6,6 +6,7 @@ import Layout from "../components/layout";
 import { getAllPosts } from "../lib/posts";
 import Head from "next/head";
 import Post from "../interfaces/post";
+import generateRssFeed from "../lib/rss";
 
 type Props = {
   allPosts: Post[];
@@ -43,6 +44,7 @@ export default function Index({ allPosts }: Props) {
 }
 
 export const getStaticProps = async () => {
+  await generateRssFeed();
   const allPosts = getAllPosts([
     "title",
     "date",
