@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useSearch } from "../../hooks";
 import Link from "next/link";
@@ -8,12 +8,35 @@ export const SearchButton = () => {
   const [isSearchVisible, setSearchVisible] = useState(true);
   const [searchValue, setSearchValue] = useState<string>();
   const debouncedValue = useDebounced(searchValue, 100);
+  const inputRef = useRef();
 
   const { results, setSearchValue: updateValue } = useSearch();
 
   useEffect(() => {
     updateValue(debouncedValue);
   }, [debouncedValue]);
+
+  useEffect(() => {
+    const onKeyPress = (ev) => {
+      {
+        if (ev?.key === "Escape" && searchValue) {
+          setSearchValue("");
+          setSearchVisible(false);
+        }
+      }
+    };
+    window.addEventListener("keydown", onKeyPress);
+
+    return () => {
+      return window.removeEventListener("keydown", onKeyPress);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isSearchVisible) {
+      inputRef.current?.focus();
+    }
+  }, [isSearchVisible]);
 
   return (
     <>
@@ -27,12 +50,12 @@ export const SearchButton = () => {
       {isSearchVisible && (
         <div className="flex flex-col w-[50vw] fixed top-[25%] left-[25%] shadow-lg">
           <input
+            ref={inputRef}
             placeholder="Search"
             className=" border h-14 p-4 rounded"
             onChange={(ev) => {
               setSearchValue(ev.target.value);
             }}
-            value={searchValue}
           />
 
           <div className="flex flex-col">
