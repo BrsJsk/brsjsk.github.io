@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 import { FaGithubSquare, FaLinkedin, FaRssSquare } from "react-icons/fa";
+import { SearchButton } from "./Search";
 
 const navbarItems = [
   {
@@ -43,6 +44,8 @@ const Header = () => {
       </div>
 
       <div className="flex flex-row">
+        <SearchButton />
+
         <Link href="https://github.com/BrsJsk/">
           <FaGithubSquare className="w-8 h-8 mr-2" />
         </Link>
