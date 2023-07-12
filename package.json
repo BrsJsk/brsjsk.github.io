@@ -17,7 +17,8 @@
     "remark": "^14.0.2",
     "remark-html": "^15.0.1",
     "rss": "^1.2.2",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "use-debounced": "^1.1.0"
   },
   "devDependencies": {
     "@types/node": "^18.0.3",
