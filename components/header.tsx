@@ -14,6 +14,11 @@ const navbarItems = [
     url: "/posts",
     active: false,
   },
+  {
+    title: "Certificates",
+    url: "/certificates",
+    active: false,
+  },
 ];
 
 const Header = () => {
