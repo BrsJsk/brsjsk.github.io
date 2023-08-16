@@ -15,8 +15,8 @@ const navbarItems = [
     active: false,
   },
   {
-    title: "Certificates",
-    url: "/certificates",
+    title: "About",
+    url: "/about",
     active: false,
   },
 ];
