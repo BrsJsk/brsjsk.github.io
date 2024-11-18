@@ -3,7 +3,12 @@ import { getAllPosts } from "./posts";
 import fs from "fs";
 
 export default async function generateRssFeed() {
-  const posts = getAllPosts();
+  const posts = getAllPosts([
+    "title",
+    "date",
+    "slug",
+    "excerpt",
+  ]);
   const site_url = "brsjsk.github.io";
 
   const feedOptions = {
@@ -20,7 +25,7 @@ export default async function generateRssFeed() {
   posts.map((post) => {
     feed.item({
       title: post.title,
-      description: post.description,
+      description: post.excerpt,
       url: `${site_url}/blog/${post.slug}`,
       date: post.date,
     });

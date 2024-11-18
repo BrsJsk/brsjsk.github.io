@@ -56,7 +56,7 @@ const Header = () => {
           <FaLinkedin className="w-8 h-8 mr-2" />
         </Link>
 
-        <Link href="rss.xml">
+        <Link href="/rss.xml">
           <FaRssSquare className="w-8 h-8 text-orange-500" />
         </Link>
       </div>
