@@ -21,3 +21,12 @@ pre > code {
     font-size: smaller;
     line-height: calc(1em + 1.25ex);
 }
+
+a {
+    color: #0f0fb7;
+    font-weight: 500;
+}
+
+ul {
+    list-style-type: circle;
+}
