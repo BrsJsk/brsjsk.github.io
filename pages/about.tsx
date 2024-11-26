@@ -9,7 +9,7 @@ export default function Certificates() {
     <>
       <Layout>
         <Head>
-          <title>Boris Joskic</title>
+          <title>Boris Joskic - About</title>
         </Head>
         <Container>
           <main>

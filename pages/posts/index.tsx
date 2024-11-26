@@ -3,6 +3,7 @@ import Layout from "../../components/layout";
 import { getAllPosts } from "../../lib/posts";
 import type Post from "../../interfaces/post";
 import PostPreview from "../../components/post-preview";
+import Head from "next/head";
 
 type Props = {
   allPosts: Post[];
@@ -11,6 +12,9 @@ type Props = {
 export default function Index({ allPosts }: Props) {
   return (
     <>
+        <Head>
+                <title>Boris Joskic - Posts</title>
+              </Head>
       <Layout>
         <Container>
           <div className="flex flex-col">

@@ -20,13 +20,18 @@ pre > code {
     font-feature-settings: normal;
     font-size: smaller;
     line-height: calc(1em + 1.25ex);
+
+    display: block;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    min-width: 100px;
 }
 
-a {
-    color: #0f0fb7;
-    font-weight: 500;
+article a {
+        color: #0f0fb7 !important;
+        font-weight: 500 !important;
 }
 
-ul {
+article ul {
     list-style-type: circle;
 }
