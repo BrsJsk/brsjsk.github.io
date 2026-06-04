@@ -17,9 +17,6 @@ export const Header = () => (
           Posts
         </Link>
 
-        <Link href="/contact" className="hover:text-primary transition-colors">
-          Contact
-        </Link>
       </nav>
     </div>
   </header>
