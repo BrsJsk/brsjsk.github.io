@@ -1,0 +1,46 @@
+---
+slug: '/posts/phaser-why-what-how'
+date: '2024-11-21'
+title: 'Phaser - Why, what, how?'
+featuredImage: /images/phaser-what-cover.png
+published: true
+---
+
+## Why
+
+Games got me into programming. As much as I loved playing them, I loved figuring out how they are even made. To this day, I know the basics. To challenge myself, I thought it could be a good idea to finally figure out at least some part of it. Could using a language I already know and use on a daily basis make it easier?
+
+I’ll try to document my findings in a series of blog posts.
+
+---
+
+## What
+
+I’m not really sure on what I’ll try to build. It’s most likely going to be a multiplayer RPG, and yes, I know… that’s a lot of work. At least I know what I’m getting myself into.
+
+To make things as simple as possible, it’s just going to be PVE multiplayer, where you can join worlds with other players or create your own private world. There will be different paths you can take and upgrade skills within that path. So basically, like any other RPG game.
+
+![Phaser1](/images/ph1.png)
+
+## How
+
+A sane person might go with Unreal, Unity, or even Godot. But I’m going with Phaser.js as the game engine. I’m going to use a language I’m most familiar with—and a framework and concepts I know nothing about. I guess with official docs and community examples, I might get something right…
+
+As it’s going to be a pixelated top-down game (no 3D here for now), I’m using Tiled as my editor for the world.
+
+[Map Editor (Tiled)](https://www.mapeditor.org)
+
+To skip additional overhead that includes me creating all the art, I’m going to download free assets. There’s no point in buying or creating custom tiles, characters, icons, and animations when I’m just figuring out what, how, and where. I’ve decided to go with the free fields tileset from Craftpix:
+
+https://craftpix.net/freebies/free-fields-tileset-pixel-art-for-tower-defense/
+
+![Phaser2](/images/ph2.png)
+
+They have a couple of free downloads and some paid ones. The paid ones will be useful if I’m able to code at least something playable.
+
+Of course, I’m going with Vite + TypeScript. After some tutorials on Tiled and Phaser, deleting some boilerplate code, and writing a very simple scene, I’ve got my tiles on the screen.
+
+![Phaser3](/images/ph3.png)
+![Phaser4](/images/ph4.png)
+
+Next step would be adding a character, movement, and some camera improvements…

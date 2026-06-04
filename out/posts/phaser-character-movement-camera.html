@@ -1,0 +1,85 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><title>Phaser – Character, movement, camera?<!-- --> | Joskonic</title><meta property="og:title" content="Phaser – Character, movement, camera?"/><meta property="og:type" content="article"/><meta property="og:image" content="/images/phaser-camera-cover.png"/><meta property="og:url" content="https://joskonic.com/posts//posts/phaser-character-movement-camera"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Phaser – Character, movement, camera?"/><meta name="twitter:image" content="/images/phaser-camera-cover.png"/><link rel="canonical" href="https://joskonic.com/posts//posts/phaser-character-movement-camera"/><meta name="next-head-count" content="11"/><link rel="preload" href="/_next/static/css/2916d4eed53557ba.css" as="style"/><link rel="stylesheet" href="/_next/static/css/2916d4eed53557ba.css" data-n-g=""/><link rel="preload" href="/_next/static/css/5c3da54741072322.css" as="style"/><link rel="stylesheet" href="/_next/static/css/5c3da54741072322.css" data-n-p=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-78c92fac7aa8fdd8.js"></script><script src="/_next/static/chunks/webpack-b8f8d6679aaa5f42.js" defer=""></script><script src="/_next/static/chunks/framework-2c16ac744b6cdea6.js" defer=""></script><script src="/_next/static/chunks/main-98738eb412658d6f.js" defer=""></script><script src="/_next/static/chunks/pages/_app-a7049ac346c2f32d.js" defer=""></script><script src="/_next/static/chunks/664-286c9e8f8e63bf06.js" defer=""></script><script src="/_next/static/chunks/959-c3bdea098f32ac04.js" defer=""></script><script src="/_next/static/chunks/980-17271467ef34a583.js" defer=""></script><script src="/_next/static/chunks/pages/posts/%5Bslug%5D-f11bc0a76b254794.js" defer=""></script><script src="/_next/static/C4g5vhMieAreafSwl_Au-/_buildManifest.js" defer=""></script><script src="/_next/static/C4g5vhMieAreafSwl_Au-/_ssgManifest.js" defer=""></script></head><body><div id="__next"><header class="w-full bg-surface text-white shadow-md"><div class="container mx-auto flex items-center justify-between py-4"><div class="text-2xl font-bold tracking-tight"><a class="hover:text-primary transition-colors" href="/">Boris Joskic</a></div><nav class="flex gap-6 text-lg font-medium"><a class="hover:text-primary transition-colors" href="/">Home</a><a class="hover:text-primary transition-colors" href="/posts">Posts</a></nav></div></header><article class="article-light container mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-10 mb-20"><div class="flex items-center justify-between mb-6"><div><h1 class="text-3xl md:text-4xl font-extrabold mb-2 leading-tight">Phaser – Character, movement, camera?</h1><p class="text-gray-500 text-sm">November 25, 2024</p></div><button class="ml-4 px-4 py-2 rounded bg-surface border cursor-pointer font-medium border-black text-black">← Go Back</button></div><div class="w-full"><img alt="Phaser – Character, movement, camera?" loading="eager" width="800" height="600" decoding="async" data-nimg="1" style="color:transparent;width:100%;height:auto" src="/images/phaser-camera-cover.png"/></div><div><p>I&#x27;m using characters from <strong>CraftPixFreePixelCitizen</strong>. I don’t need anything fancy—just basic animations like idle and walking. This collection offers 4 different characters and pairs nicely with the other asset packs.</p>
+<h2>Displaying a Character</h2>
+<p>Through some trial and error, I identified two key steps:</p>
+<ol>
+<li><strong>Break the PNG into individual sprites.</strong></li>
+<li><strong>Upload them into a texture packer</strong>.</li>
+</ol>
+<p>I used <strong><a href="https://www.leshylabs.com/apps/sstool/">Sprite-Cutter</a></strong> with the <em>&quot;By number of columns/rows&quot;</em> cutting method. After that, I used <strong><a href="https://free-tex-packer.com/">FreeTexPacker</a></strong>, uploading the 4 idle character sprites. It generated the required PNG and JSON files.</p>
+<p><img src="/images/pc1.png" alt="Phaser1"/></p>
+<h3>Preloading Textures</h3>
+<pre><pre><code class="language-ts">this.load.atlas(PLAYER_NORMAL.key, &#x27;players/1/idle/texture.png&#x27;, &#x27;players/1/idle/texture.json&#x27;);
+</code></pre></pre>
+<p>Rendering the Character
+To render the character, set the initial x/y positions, the key of the loaded texture, and the frame name from the JSON file.</p>
+<p><img src="/images/pc2.png" alt="Phaser1"/></p>
+<p>In the end, this gives us a simple character just standing and idling at a fixed position.</p>
+<p><img src="/images/pc3.gif" alt="Phaser3"/></p>
+<p>Movement
+Adding movement was easier than expected. The update() function in the main scene calls the Player.move() method each frame.</p>
+<p>Speed is set to 200 for testing. I check which key is pressed, update the velocity, and run the appropriate animation.</p>
+<p>Here&#x27;s the basic movement logic:</p>
+<pre><pre><code class="language-ts">public move(): void {
+  if (!this.cursors || !this.playerSprite) return;
+
+  const speed = 200;
+
+  if (this.cursors.down.isDown) {
+    this.playerSprite.anims.play(PLAYER_NORMAL.downAnimation, true);
+    this.playerSprite.setVelocityY(2 * speed);
+  } else if (this.cursors.up.isDown) {
+    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);
+    this.playerSprite.setVelocityY(-2 * speed);
+  } else if (this.cursors.left.isDown) {
+    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);
+    this.playerSprite.setVelocityX(-2 * speed);
+  } else if (this.cursors.right.isDown) {
+    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);
+    this.playerSprite.setVelocityX(2 * speed);
+  } else {
+    this.playerSprite.setVelocityY(0);
+    this.playerSprite.setVelocityX(0);
+    this.playerSprite.anims.play(PLAYER_NORMAL.idleDownAnimation, true);
+  }
+}
+</code></pre></pre>
+<p>Note: I didn’t include specific left/right movement sprites yet, but the code is ready when the graphics are updated.</p>
+<p>Camera
+To make the camera follow the player:</p>
+<pre><pre><code class="language-ts">this.scene.cameras.main.startFollow(this.playerSprite, true);
+</code></pre></pre>
+<p>Collision
+I added a fence layer (used for collisions) and a grass layer (for visual effects) using Tiled.</p>
+<p>Steps:
+In Tiled, modify the fence tileset and add a custom boolean property:</p>
+<p>collides: true</p>
+<p>Update Preloader.ts:</p>
+<pre><pre><code class="language-ts">this.load.tilemapTiledJSON(&#x27;ground&#x27;, &#x27;maps/map2.json&#x27;);
+this.load.image(&#x27;FieldsTileset&#x27;, &#x27;maps/FieldsTileset.png&#x27;);
+this.load.image(&#x27;fence&#x27;, &#x27;maps/fence.png&#x27;);
+this.load.image(&#x27;grass&#x27;, &#x27;maps/grass.png&#x27;);
+</code></pre></pre>
+<p>In Game.ts, add the tileset images and layers:</p>
+<pre><pre><code class="language-ts">const t2 = map.addTilesetImage(&#x27;fence&#x27;);
+const t3 = map.addTilesetImage(&#x27;grass&#x27;);
+
+const fenceLayer = map
+  .createLayer(&#x27;fence&#x27;, t2, 0, 0)
+  .setCollisionByProperty({ collides: true }, true);
+
+map.createLayer(&#x27;grass&#x27;, t3, 0, 0);
+</code></pre></pre>
+<p>Add physics collider:</p>
+<pre><pre><code class="language-ts">this.physics.add.collider(this.player.getSprite(), fenceLayer);
+</code></pre></pre>
+<p>If you encounter a physics is undefined error, update your Phaser config (likely in main.ts):</p>
+<pre><pre><code class="language-ts">physics: {
+  default: &#x27;arcade&#x27;,
+  arcade: {
+    debug: true
+  }
+}
+</code></pre></pre>
+<p><img src="/images/pc4.gif" alt="Phaser1"/></p>
+<h1>Final Thoughts</h1>
+<p>So far, things are shaping up well. The foundation is in place, and I’ve worked through key challenges.</p></div></article><footer class="h-36 w-full bg-surface text-white shadow-inner py-4 font-secondary container mx-auto flex align-center items-center justify-center px-4 max-w-6xl"><span class="text-base text-muted">© <!-- -->2025<!-- --> Boris Joskic. All rights reserved.</span></footer></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"source":{"compiledSource":"\"use strict\";\nconst {Fragment: _Fragment, jsx: _jsx, jsxs: _jsxs} = arguments[0];\nconst {useMDXComponents: _provideComponents} = arguments[0];\nfunction _createMdxContent(props) {\n  const _components = {\n    a: \"a\",\n    code: \"code\",\n    em: \"em\",\n    h1: \"h1\",\n    h2: \"h2\",\n    h3: \"h3\",\n    img: \"img\",\n    li: \"li\",\n    ol: \"ol\",\n    p: \"p\",\n    pre: \"pre\",\n    strong: \"strong\",\n    ..._provideComponents(),\n    ...props.components\n  };\n  return _jsxs(_Fragment, {\n    children: [_jsxs(_components.p, {\n      children: [\"I'm using characters from \", _jsx(_components.strong, {\n        children: \"CraftPixFreePixelCitizen\"\n      }), \". I don’t need anything fancy—just basic animations like idle and walking. This collection offers 4 different characters and pairs nicely with the other asset packs.\"]\n    }), \"\\n\", _jsx(_components.h2, {\n      children: \"Displaying a Character\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Through some trial and error, I identified two key steps:\"\n    }), \"\\n\", _jsxs(_components.ol, {\n      children: [\"\\n\", _jsx(_components.li, {\n        children: _jsx(_components.strong, {\n          children: \"Break the PNG into individual sprites.\"\n        })\n      }), \"\\n\", _jsxs(_components.li, {\n        children: [_jsx(_components.strong, {\n          children: \"Upload them into a texture packer\"\n        }), \".\"]\n      }), \"\\n\"]\n    }), \"\\n\", _jsxs(_components.p, {\n      children: [\"I used \", _jsx(_components.strong, {\n        children: _jsx(_components.a, {\n          href: \"https://www.leshylabs.com/apps/sstool/\",\n          children: \"Sprite-Cutter\"\n        })\n      }), \" with the \", _jsx(_components.em, {\n        children: \"\\\"By number of columns/rows\\\"\"\n      }), \" cutting method. After that, I used \", _jsx(_components.strong, {\n        children: _jsx(_components.a, {\n          href: \"https://free-tex-packer.com/\",\n          children: \"FreeTexPacker\"\n        })\n      }), \", uploading the 4 idle character sprites. It generated the required PNG and JSON files.\"]\n    }), \"\\n\", _jsx(_components.p, {\n      children: _jsx(_components.img, {\n        src: \"/images/pc1.png\",\n        alt: \"Phaser1\"\n      })\n    }), \"\\n\", _jsx(_components.h3, {\n      children: \"Preloading Textures\"\n    }), \"\\n\", _jsx(_components.pre, {\n      children: _jsx(_components.code, {\n        className: \"language-ts\",\n        children: \"this.load.atlas(PLAYER_NORMAL.key, 'players/1/idle/texture.png', 'players/1/idle/texture.json');\\n\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Rendering the Character\\nTo render the character, set the initial x/y positions, the key of the loaded texture, and the frame name from the JSON file.\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: _jsx(_components.img, {\n        src: \"/images/pc2.png\",\n        alt: \"Phaser1\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"In the end, this gives us a simple character just standing and idling at a fixed position.\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: _jsx(_components.img, {\n        src: \"/images/pc3.gif\",\n        alt: \"Phaser3\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Movement\\nAdding movement was easier than expected. The update() function in the main scene calls the Player.move() method each frame.\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Speed is set to 200 for testing. I check which key is pressed, update the velocity, and run the appropriate animation.\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Here's the basic movement logic:\"\n    }), \"\\n\", _jsx(_components.pre, {\n      children: _jsx(_components.code, {\n        className: \"language-ts\",\n        children: \"public move(): void {\\n  if (!this.cursors || !this.playerSprite) return;\\n\\n  const speed = 200;\\n\\n  if (this.cursors.down.isDown) {\\n    this.playerSprite.anims.play(PLAYER_NORMAL.downAnimation, true);\\n    this.playerSprite.setVelocityY(2 * speed);\\n  } else if (this.cursors.up.isDown) {\\n    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);\\n    this.playerSprite.setVelocityY(-2 * speed);\\n  } else if (this.cursors.left.isDown) {\\n    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);\\n    this.playerSprite.setVelocityX(-2 * speed);\\n  } else if (this.cursors.right.isDown) {\\n    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);\\n    this.playerSprite.setVelocityX(2 * speed);\\n  } else {\\n    this.playerSprite.setVelocityY(0);\\n    this.playerSprite.setVelocityX(0);\\n    this.playerSprite.anims.play(PLAYER_NORMAL.idleDownAnimation, true);\\n  }\\n}\\n\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Note: I didn’t include specific left/right movement sprites yet, but the code is ready when the graphics are updated.\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Camera\\nTo make the camera follow the player:\"\n    }), \"\\n\", _jsx(_components.pre, {\n      children: _jsx(_components.code, {\n        className: \"language-ts\",\n        children: \"this.scene.cameras.main.startFollow(this.playerSprite, true);\\n\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Collision\\nI added a fence layer (used for collisions) and a grass layer (for visual effects) using Tiled.\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Steps:\\nIn Tiled, modify the fence tileset and add a custom boolean property:\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"collides: true\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Update Preloader.ts:\"\n    }), \"\\n\", _jsx(_components.pre, {\n      children: _jsx(_components.code, {\n        className: \"language-ts\",\n        children: \"this.load.tilemapTiledJSON('ground', 'maps/map2.json');\\nthis.load.image('FieldsTileset', 'maps/FieldsTileset.png');\\nthis.load.image('fence', 'maps/fence.png');\\nthis.load.image('grass', 'maps/grass.png');\\n\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"In Game.ts, add the tileset images and layers:\"\n    }), \"\\n\", _jsx(_components.pre, {\n      children: _jsx(_components.code, {\n        className: \"language-ts\",\n        children: \"const t2 = map.addTilesetImage('fence');\\nconst t3 = map.addTilesetImage('grass');\\n\\nconst fenceLayer = map\\n  .createLayer('fence', t2, 0, 0)\\n  .setCollisionByProperty({ collides: true }, true);\\n\\nmap.createLayer('grass', t3, 0, 0);\\n\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"Add physics collider:\"\n    }), \"\\n\", _jsx(_components.pre, {\n      children: _jsx(_components.code, {\n        className: \"language-ts\",\n        children: \"this.physics.add.collider(this.player.getSprite(), fenceLayer);\\n\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"If you encounter a physics is undefined error, update your Phaser config (likely in main.ts):\"\n    }), \"\\n\", _jsx(_components.pre, {\n      children: _jsx(_components.code, {\n        className: \"language-ts\",\n        children: \"physics: {\\n  default: 'arcade',\\n  arcade: {\\n    debug: true\\n  }\\n}\\n\"\n      })\n    }), \"\\n\", _jsx(_components.p, {\n      children: _jsx(_components.img, {\n        src: \"/images/pc4.gif\",\n        alt: \"Phaser1\"\n      })\n    }), \"\\n\", _jsx(_components.h1, {\n      children: \"Final Thoughts\"\n    }), \"\\n\", _jsx(_components.p, {\n      children: \"So far, things are shaping up well. The foundation is in place, and I’ve worked through key challenges.\"\n    })]\n  });\n}\nfunction MDXContent(props = {}) {\n  const {wrapper: MDXLayout} = {\n    ..._provideComponents(),\n    ...props.components\n  };\n  return MDXLayout ? _jsx(MDXLayout, {\n    ...props,\n    children: _jsx(_createMdxContent, {\n      ...props\n    })\n  }) : _createMdxContent(props);\n}\nreturn {\n  default: MDXContent\n};\n","frontmatter":{},"scope":{"slug":"/posts/phaser-character-movement-camera","date":"2024-11-25","title":"Phaser – Character, movement, camera?","featuredImage":"/images/phaser-camera-cover.png","published":true}},"frontMatter":{"title":"Phaser – Character, movement, camera?","slug":"/posts/phaser-character-movement-camera","date":"2024-11-25","featuredImage":"/images/phaser-camera-cover.png","published":true}},"__N_SSG":true},"page":"/posts/[slug]","query":{"slug":"phaser-character-movement-camera"},"buildId":"C4g5vhMieAreafSwl_Au-","isFallback":false,"gsp":true,"scriptLoader":[]}</script></body></html>

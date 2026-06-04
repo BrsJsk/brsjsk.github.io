@@ -1,0 +1,134 @@
+---
+slug: '/posts/phaser-character-movement-camera'
+date: '2024-11-25'
+title: 'Phaser – Character, movement, camera?'
+featuredImage: /images/phaser-camera-cover.png
+
+published: true
+---
+
+I'm using characters from **CraftPixFreePixelCitizen**. I don’t need anything fancy—just basic animations like idle and walking. This collection offers 4 different characters and pairs nicely with the other asset packs.
+
+## Displaying a Character
+
+Through some trial and error, I identified two key steps:
+
+1. **Break the PNG into individual sprites.**
+2. **Upload them into a texture packer**.
+
+I used **[Sprite-Cutter](https://www.leshylabs.com/apps/sstool/)** with the _"By number of columns/rows"_ cutting method. After that, I used **[FreeTexPacker](https://free-tex-packer.com/)**, uploading the 4 idle character sprites. It generated the required PNG and JSON files.
+
+![Phaser1](/images/pc1.png)
+
+### Preloading Textures
+
+```ts
+this.load.atlas(PLAYER_NORMAL.key, 'players/1/idle/texture.png', 'players/1/idle/texture.json');
+```
+
+import pc3 from '../../images/pc3.gif';
+import pc4 from '../../images/pc4.gif';
+
+Rendering the Character
+To render the character, set the initial x/y positions, the key of the loaded texture, and the frame name from the JSON file.
+
+![Phaser1](/images/pc2.png)
+
+In the end, this gives us a simple character just standing and idling at a fixed position.
+
+![Phaser3](/images/pc3.gif)
+
+Movement
+Adding movement was easier than expected. The update() function in the main scene calls the Player.move() method each frame.
+
+Speed is set to 200 for testing. I check which key is pressed, update the velocity, and run the appropriate animation.
+
+Here's the basic movement logic:
+
+```ts
+public move(): void {
+  if (!this.cursors || !this.playerSprite) return;
+
+  const speed = 200;
+
+  if (this.cursors.down.isDown) {
+    this.playerSprite.anims.play(PLAYER_NORMAL.downAnimation, true);
+    this.playerSprite.setVelocityY(2 * speed);
+  } else if (this.cursors.up.isDown) {
+    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);
+    this.playerSprite.setVelocityY(-2 * speed);
+  } else if (this.cursors.left.isDown) {
+    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);
+    this.playerSprite.setVelocityX(-2 * speed);
+  } else if (this.cursors.right.isDown) {
+    this.playerSprite.anims.play(PLAYER_NORMAL.upAnimation, true);
+    this.playerSprite.setVelocityX(2 * speed);
+  } else {
+    this.playerSprite.setVelocityY(0);
+    this.playerSprite.setVelocityX(0);
+    this.playerSprite.anims.play(PLAYER_NORMAL.idleDownAnimation, true);
+  }
+}
+```
+
+Note: I didn’t include specific left/right movement sprites yet, but the code is ready when the graphics are updated.
+
+Camera
+To make the camera follow the player:
+
+```ts
+this.scene.cameras.main.startFollow(this.playerSprite, true);
+```
+
+Collision
+I added a fence layer (used for collisions) and a grass layer (for visual effects) using Tiled.
+
+Steps:
+In Tiled, modify the fence tileset and add a custom boolean property:
+
+collides: true
+
+Update Preloader.ts:
+
+```ts
+this.load.tilemapTiledJSON('ground', 'maps/map2.json');
+this.load.image('FieldsTileset', 'maps/FieldsTileset.png');
+this.load.image('fence', 'maps/fence.png');
+this.load.image('grass', 'maps/grass.png');
+```
+
+In Game.ts, add the tileset images and layers:
+
+```ts
+const t2 = map.addTilesetImage('fence');
+const t3 = map.addTilesetImage('grass');
+
+const fenceLayer = map
+  .createLayer('fence', t2, 0, 0)
+  .setCollisionByProperty({ collides: true }, true);
+
+map.createLayer('grass', t3, 0, 0);
+```
+
+Add physics collider:
+
+```ts
+this.physics.add.collider(this.player.getSprite(), fenceLayer);
+```
+
+If you encounter a physics is undefined error, update your Phaser config (likely in main.ts):
+
+```ts
+physics: {
+  default: 'arcade',
+  arcade: {
+    debug: true
+  }
+}
+```
+
+![Phaser1](/images/pc4.gif)
+
+# Final Thoughts
+
+So far, things are shaping up well. The foundation is in place, and I’ve worked through key challenges.
