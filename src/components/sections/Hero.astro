@@ -1,0 +1,112 @@
+---
+import { useTranslations } from '../../i18n';
+import GradientMesh from '../ui/GradientMesh.astro';
+import DotField from '../ui/DotField.astro';
+import Button from '../ui/Button.astro';
+import Reveal from '../motion/Reveal.astro';
+
+const t = useTranslations();
+---
+
+<section class="hero">
+	<GradientMesh variant="hero" />
+	<DotField opacity={0.55} />
+
+	<div class="u-container hero__inner">
+		<Reveal load class="hero__stack">
+			<p class="hero__role">{t.hero.role}</p>
+			<h1 class="hero__statement">{t.hero.statement}</h1>
+			<div class="hero__actions">
+				<Button href="/work" variant="primary" arrow>{t.hero.ctaSecondary}</Button>
+				<Button href="/contact" variant="secondary">{t.hero.ctaPrimary}</Button>
+			</div>
+		</Reveal>
+	</div>
+</section>
+
+<style>
+	.hero {
+		position: relative;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		min-height: 92vh;
+		/* Pull up under the sticky nav so the gradient is continuous behind it.
+		   Without this the hero's top edge sits directly below the nav and
+		   overflow:hidden slices the blurred mesh into a visible hard band. */
+		margin-top: calc(-1 * var(--nav-height));
+		padding-block: calc(var(--nav-height) + clamp(3rem, 7vw, 5rem)) clamp(3rem, 6vw, 4rem);
+	}
+
+	/* A soft light source from the top. Dark hero sections in the references all
+	   have one — without it the section reads as evenly-lit flat grey. */
+	.hero::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 65%;
+		z-index: 0;
+		pointer-events: none;
+		background: radial-gradient(ellipse 60% 100% at 50% 0%, var(--spotlight), transparent 70%);
+	}
+
+	.hero__inner {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+	}
+
+	.hero__stack {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.5rem;
+		text-align: center;
+		max-width: 56rem;
+		margin-inline: auto;
+	}
+
+	/* Deliberately plain text, not an accent-coloured pill — accent is reserved
+	   for the CTA, the gradient, and focus rings (see BUILD-PLAN.md §1.1). */
+	.hero__role {
+		font-size: 0.8125rem;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.14em;
+		color: var(--color-text-subtle);
+		margin-bottom: -0.5rem;
+	}
+
+	/* The bio sentence IS the h1 here — sized for a ~140-character sentence
+	   rather than a short headline, and capped at 30ch so it breaks into four
+	   balanced lines instead of a couple of very wide ones. */
+	.hero__statement {
+		max-width: 30ch;
+		font-size: clamp(2rem, 5vw, 3.5rem);
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.038em;
+		color: var(--color-text);
+	}
+
+	.hero__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		margin-top: 0.5rem;
+	}
+
+	@media (max-width: 640px) {
+		.hero__actions {
+			flex-direction: column;
+			width: 100%;
+		}
+		.hero__actions > :global(a) {
+			width: 100%;
+		}
+	}
+</style>

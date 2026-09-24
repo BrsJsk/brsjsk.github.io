@@ -1,0 +1,79 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useTranslations } from '../i18n';
+import { CONTACT_EMAIL, GA_MEASUREMENT_ID, OWNER_NAME } from '../consts';
+
+// TODO(owner): no registered business exists yet, so this names you personally
+// as the data controller — which is correct for a sole individual. When an
+// entity is registered, swap the controller line below for the registered name
+// and address. If you end up processing EU client data at any scale, have a
+// lawyer review this — it's a reasonable starting point, not legal advice.
+const t = useTranslations();
+---
+
+<BaseLayout title={t.privacy.title}>
+	<section class="u-section">
+		<div class="u-narrow">
+			<h1 class="privacy__title">{t.privacy.title}</h1>
+
+			<div class="prose">
+				<p>
+					This site (brsjsk) is run by {OWNER_NAME}, working as an independent developer. {OWNER_NAME} is
+					the data controller for anything described below. This page explains what the site collects and
+					why.
+				</p>
+
+				<h2>What's collected</h2>
+				<p>
+					<strong>The contact form.</strong> When you send a message, the name, email address, and message you
+					type are used solely to reply to you. They aren't sold or added to a mailing list.
+				</p>
+				<p>
+					Submissions are delivered by <a href="https://web3forms.com" rel="noopener noreferrer">Web3Forms</a>,
+					which processes the form on my behalf and forwards it to my inbox. That means your message passes
+					through their service in transit — see their
+					<a href="https://web3forms.com/privacy" rel="noopener noreferrer">privacy policy</a> for how they
+					handle it. If you'd rather not use the form, email me directly instead.
+				</p>
+				{
+					GA_MEASUREMENT_ID ? (
+						<p>
+							<strong>Analytics.</strong> With your consent, this site uses Google Analytics to measure how
+							visitors find and use it — pages viewed, rough location, and device type. IP addresses are
+							anonymised. No analytics cookies are set unless you press "Accept" on the cookie banner, and you
+							can decline without losing access to anything.
+						</p>
+					) : (
+						<p>
+							<strong>Analytics.</strong> This site currently runs no analytics and sets no tracking cookies.
+						</p>
+					)
+				}
+
+				<h2>Your rights</h2>
+				<p>
+					Under the GDPR you can ask what data is held about you, ask for it to be corrected or deleted, or
+					withdraw consent at any time. To withdraw analytics consent, clear this site's data in your browser
+					settings and choose "Reject" when the banner reappears.
+				</p>
+
+				<h2>Getting in touch</h2>
+				<p>
+					For anything on this page, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+				</p>
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.privacy__title {
+		font-size: clamp(2rem, 4vw, 2.75rem);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		color: var(--color-text);
+		margin-bottom: 2rem;
+	}
+</style>

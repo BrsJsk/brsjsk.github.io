@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import Reveal from '../motion/Reveal.astro';
+
+const testimonials = await getCollection('testimonials');
+const testimonial = testimonials[0];
+---
+
+{
+	testimonial && (
+		<section class="testimonials u-section">
+			<div class="u-narrow">
+				<Reveal class="testimonials__block">
+					<blockquote class="testimonials__quote">"{testimonial.data.quote}"</blockquote>
+					<p class="testimonials__attribution">
+						{testimonial.data.name} · {testimonial.data.role}, {testimonial.data.company}
+					</p>
+				</Reveal>
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.testimonials__block {
+		border-left: 2px solid var(--color-accent);
+		padding-left: 1.5rem;
+	}
+
+	.testimonials__quote {
+		margin: 0;
+		font-size: 1.1875rem;
+		line-height: 1.5;
+		color: var(--color-text);
+	}
+
+	.testimonials__attribution {
+		margin-top: 0.75rem;
+		font-size: 0.875rem;
+		color: var(--color-text-subtle);
+	}
+</style>

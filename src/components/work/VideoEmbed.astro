@@ -1,0 +1,137 @@
+---
+// Facade pattern — a poster image plus a play button. The real iframe never
+// loads until clicked, so no third-party weight or cookies land on the page
+// by default. See BUILD-PLAN.md Step 10.
+interface Props {
+	url: string;
+	title: string;
+}
+
+const { url, title } = Astro.props;
+
+type ParsedVideo = { provider: 'youtube' | 'vimeo'; id: string };
+
+function parseVideo(rawUrl: string): ParsedVideo | null {
+	try {
+		const u = new URL(rawUrl);
+		if (u.hostname.includes('youtube.com')) {
+			const id = u.searchParams.get('v');
+			if (id) return { provider: 'youtube', id };
+		}
+		if (u.hostname === 'youtu.be') {
+			const id = u.pathname.slice(1);
+			if (id) return { provider: 'youtube', id };
+		}
+		if (u.hostname.includes('vimeo.com')) {
+			const id = u.pathname.split('/').filter(Boolean).pop();
+			if (id) return { provider: 'vimeo', id };
+		}
+	} catch {
+		return null;
+	}
+	return null;
+}
+
+const video = parseVideo(url);
+const poster = video?.provider === 'youtube' ? `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg` : null;
+const embedSrc =
+	video?.provider === 'youtube'
+		? `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`
+		: video?.provider === 'vimeo'
+			? `https://player.vimeo.com/video/${video.id}?autoplay=1`
+			: null;
+---
+
+{
+	video && embedSrc && (
+		<div class="video-embed" data-embed-src={embedSrc}>
+			<button type="button" class="video-embed__trigger" aria-label={`Play video: ${title}`}>
+				{poster ? (
+					<img src={poster} alt="" class="video-embed__poster" loading="lazy" />
+				) : (
+					<div class="video-embed__poster video-embed__poster--fallback" />
+				)}
+				<span class="video-embed__play" aria-hidden="true">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M8 5v14l11-7L8 5Z" />
+					</svg>
+				</span>
+			</button>
+		</div>
+	)
+}
+
+<script>
+	document.querySelectorAll<HTMLElement>('.video-embed').forEach((wrapper) => {
+		const trigger = wrapper.querySelector('.video-embed__trigger');
+		trigger?.addEventListener('click', () => {
+			const src = wrapper.dataset.embedSrc;
+			if (!src) return;
+			const iframe = document.createElement('iframe');
+			iframe.src = src;
+			iframe.title = 'Video';
+			iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+			iframe.allowFullscreen = true;
+			iframe.className = 'video-embed__iframe';
+			wrapper.innerHTML = '';
+			wrapper.appendChild(iframe);
+		});
+	});
+</script>
+
+<style>
+	.video-embed {
+		position: relative;
+		aspect-ratio: 16 / 9;
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		background: var(--color-surface);
+	}
+
+	.video-embed__trigger {
+		position: relative;
+		display: block;
+		width: 100%;
+		height: 100%;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+	}
+
+	.video-embed__poster {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.video-embed__poster--fallback {
+		background: linear-gradient(160deg, var(--color-accent-deep), var(--color-accent-violet));
+	}
+
+	.video-embed__play {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.video-embed__play svg {
+		width: 4rem;
+		height: 4rem;
+		color: white;
+		filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+		transition: transform 0.2s ease-out;
+	}
+
+	.video-embed__trigger:hover .video-embed__play svg {
+		transform: scale(1.08);
+	}
+
+	.video-embed__iframe {
+		width: 100%;
+		height: 100%;
+		border: 0;
+	}
+</style>

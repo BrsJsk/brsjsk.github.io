@@ -1,0 +1,26 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_DESCRIPTION } from '../consts';
+import Hero from '../components/sections/Hero.astro';
+import FeaturedWork from '../components/sections/FeaturedWork.astro';
+import InHouse from '../components/sections/InHouse.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import BlogTeaser from '../components/sections/BlogTeaser.astro';
+import AboutContact from '../components/sections/AboutContact.astro';
+
+// Deliberately content-only: work, in-house products, testimonials, writing,
+// then the portrait + contact form. The Services, Process and CtaBand
+// components still exist under src/components/sections/ but are unlinked —
+// they were marketing filler rather than content.
+---
+
+<BaseLayout title="Home" description={SITE_DESCRIPTION}>
+	<Hero />
+	<FeaturedWork />
+	<InHouse />
+	<Testimonials />
+	<BlogTeaser />
+	<AboutContact />
+</BaseLayout>

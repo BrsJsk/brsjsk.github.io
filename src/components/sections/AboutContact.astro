@@ -1,0 +1,86 @@
+---
+// Replaces the old prose "about" block: the portrait carries the personal
+// side, the form sits right next to it so getting in touch takes no extra
+// navigation. Deliberately no bio copy — see the owner's brief.
+import { useTranslations } from '../../i18n';
+import Reveal from '../motion/Reveal.astro';
+import PortraitGlow from '../about/PortraitGlow.astro';
+import DotField from '../ui/DotField.astro';
+import ContactForm from '../contact/ContactForm';
+import { CONTACT_EMAIL, WEB3FORMS_ACCESS_KEY } from '../../consts';
+
+const t = useTranslations();
+---
+
+<section id="about" class="about-contact u-section">
+	<DotField opacity={0.4} />
+	<div class="u-container about-contact__grid">
+		<Reveal class="about-contact__portrait">
+			<PortraitGlow />
+		</Reveal>
+
+		<Reveal class="about-contact__form">
+			<h2 class="about-contact__title">{t.contact.title}</h2>
+			<ContactForm
+				client:visible
+				accessKey={WEB3FORMS_ACCESS_KEY}
+				subject={t.contact.formSubject}
+				labels={{
+					name: t.contact.formName,
+					email: t.contact.formEmail,
+					message: t.contact.formMessage,
+					submit: t.contact.formSubmit,
+					submitting: t.contact.formSubmitting,
+				}}
+				errorMessages={t.contact.errors}
+				successTitle={t.contact.formSuccessTitle}
+				successReset={t.contact.formSuccessReset}
+				genericError={t.contact.formError}
+				notConfigured={t.contact.formNotConfigured}
+				email={CONTACT_EMAIL}
+			/>
+		</Reveal>
+	</div>
+</section>
+
+<style>
+	.about-contact {
+		position: relative;
+		overflow: hidden;
+	}
+
+	/* The grid is static, so this keeps it above the positioned DotField. */
+	.about-contact__grid {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: clamp(2rem, 5vw, 4rem);
+		align-items: center;
+	}
+
+	.about-contact__form {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		min-width: 0;
+	}
+
+	.about-contact__title {
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-weight: 700;
+		letter-spacing: -0.025em;
+		color: var(--color-text);
+	}
+
+	@media (max-width: 1024px) {
+		.about-contact__grid {
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
+		}
+		.about-contact__portrait {
+			max-width: 30rem;
+			margin-inline: auto;
+		}
+	}
+</style>

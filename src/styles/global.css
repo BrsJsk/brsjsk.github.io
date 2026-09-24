@@ -1,0 +1,525 @@
+@import 'tailwindcss';
+
+@theme {
+	/* Colour — dark is the default theme. Light overrides live in the
+	   prefers-color-scheme block below. See BUILD-PLAN.md §1.1 */
+	--color-base: #08090b;
+	--color-surface: #121317;
+	--color-elevated: #191b20;
+
+	--color-border: rgb(255 255 255 / 0.08);
+	--color-border-strong: rgb(255 255 255 / 0.14);
+
+	--color-text: #f5f6f7;
+	--color-text-muted: #9ba1a9;
+	/* Lightened from #6b7280, which only reached 3.84:1 on --color-surface and
+	   failed WCAG AA for the small label/meta text this token is used for.
+	   BUILD-PLAN.md §15 flagged this pair as the likely failure. */
+	--color-text-subtle: #828a95;
+
+	--color-accent: #3b82f6;
+	--color-accent-deep: #1d4ed8;
+	--color-accent-violet: #6366f1;
+	--color-accent-cyan: #22d3ee;
+
+	--color-danger: #f87171;
+
+	/* Type — the two --font-*-src vars are injected by Astro's font pipeline
+	   (astro.config.mjs). These theme tokens wrap them with fallbacks; they
+	   deliberately don't share a name with the source vars (that would be
+	   a self-referential custom property, which is invalid CSS). */
+	--font-display: var(--font-display-src), ui-sans-serif, system-ui, sans-serif;
+	--font-body: var(--font-body-src), ui-sans-serif, system-ui, sans-serif;
+
+	/* Radius */
+	--radius-sm: 0.5rem;
+	--radius-md: 0.75rem;
+	--radius-lg: 1rem;
+	--radius-xl: 1.5rem;
+
+	/* Container widths, used by the .u-container / .u-narrow utilities below */
+	--container-page: 1200px;
+	--container-narrow: 760px;
+}
+
+/*
+ * Theme-dependent decorative values. These aren't palette colours so they'd
+ * generate meaningless Tailwind utilities in @theme — they live on :root
+ * instead. Every one of them is a value that has to invert between themes:
+ * a "lit top edge" is white on dark and near-invisible on light, a spotlight
+ * adds light on dark and shadow on light, and so on.
+ */
+:root {
+	--edge-highlight: rgb(255 255 255 / 0.16);
+	--edge-highlight-strong: rgb(255 255 255 / 0.18);
+	--focus-ring: rgb(59 130 246 / 0.2);
+	--nav-bg: rgb(11 12 14 / 0.6);
+	--nav-bg-scrolled: rgb(11 12 14 / 0.85);
+	--spotlight: rgb(255 255 255 / 0.05);
+	--dot-color: rgb(255 255 255 / 0.7);
+	--grain-opacity: 0.045;
+	--flourish-opacity: 0.03;
+	--shadow-overlay: 0 16px 40px -12px rgb(0 0 0 / 0.6);
+	--card-shadow: none;
+}
+
+/*
+ * Light theme. Deliberately unlayered so it wins over @theme's :root output
+ * and over @layer base, without needing !important anywhere.
+ *
+ * Follows the system preference only — there's no manual toggle, per the brief.
+ */
+@media (prefers-color-scheme: light) {
+	:root {
+		--color-base: #ffffff;
+		--color-surface: #f7f8f9;
+		--color-elevated: #f1f3f5;
+
+		--color-border: rgb(0 0 0 / 0.1);
+		--color-border-strong: rgb(0 0 0 / 0.18);
+
+		--color-text: #0f1115;
+		--color-text-muted: #4b5563;
+		--color-text-subtle: #646b78;
+
+		/* Deepened from the dark theme's #3b82f6, which only reaches 3.1:1 on
+		   white. #2563eb gives 5.1:1, so accent text and links pass AA. */
+		--color-accent: #2563eb;
+		--color-accent-deep: #1d4ed8;
+		--color-accent-violet: #6366f1;
+		/* #22d3ee all but disappears on white; cyan-600 keeps the gradient read. */
+		--color-accent-cyan: #0891b2;
+
+		--color-danger: #b91c1c;
+
+		/* On a light surface a white top edge is invisible — a faint dark line
+		   plus a soft shadow is the equivalent "raised panel" cue. */
+		--edge-highlight: rgb(0 0 0 / 0.06);
+		--edge-highlight-strong: rgb(0 0 0 / 0.08);
+		--card-shadow: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
+
+		--focus-ring: rgb(37 99 235 / 0.22);
+
+		--nav-bg: rgb(255 255 255 / 0.7);
+		--nav-bg-scrolled: rgb(255 255 255 / 0.9);
+
+		/* Light comes from above on dark; on light the same gesture reads as a
+		   soft shading instead. */
+		--spotlight: rgb(15 17 21 / 0.045);
+		--dot-color: rgb(15 17 21 / 0.32);
+		--grain-opacity: 0.028;
+		--flourish-opacity: 0.05;
+		--shadow-overlay: 0 16px 40px -12px rgb(16 24 40 / 0.18);
+	}
+}
+
+@layer base {
+	:root {
+		/* Nav pill (3.5rem) + its 1rem padding top and bottom. The hero pulls
+		   itself up by this so its gradient runs behind the nav instead of
+		   being clipped into a hard edge just below it. */
+		--nav-height: 5.5rem;
+	}
+
+	html {
+		scroll-behavior: smooth;
+		/* Both, so form controls, scrollbars and the like follow the system too. */
+		color-scheme: light dark;
+	}
+
+	body {
+		background: var(--color-base);
+		color: var(--color-text);
+		font-family: var(--font-body);
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+	}
+
+	h1,
+	h2,
+	h3 {
+		font-family: var(--font-display);
+		letter-spacing: -0.03em;
+		text-wrap: balance;
+	}
+
+	p {
+		text-wrap: pretty;
+	}
+
+	::selection {
+		background: var(--color-accent);
+		color: #fff;
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 3px;
+		border-radius: 4px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		html {
+			scroll-behavior: auto;
+		}
+
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+		}
+	}
+}
+
+@layer utilities {
+	.u-container {
+		max-width: var(--container-page);
+		margin-inline: auto;
+		padding-inline: clamp(1.25rem, 5vw, 2.5rem);
+	}
+
+	.u-narrow {
+		max-width: var(--container-narrow);
+		margin-inline: auto;
+		padding-inline: clamp(1.25rem, 5vw, 2.5rem);
+	}
+
+	.u-section {
+		padding-block: clamp(5rem, 12vw, 9rem);
+	}
+}
+
+/* Film grain. The single biggest thing separating the reference designs from a
+   flat CSS gradient — it breaks up the large soft colour fields so they read as
+   a photographed surface rather than a blur. Fixed so it doesn't scroll with
+   content, and pointer-events:none so it never eats a click. */
+.grain {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	pointer-events: none;
+	opacity: var(--grain-opacity);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Structure between stacked sections, like the segmented feel of the darker
+   reference sites. Only between siblings, so the first section after the hero
+   doesn't get a stray line. */
+main > section + section {
+	border-top: 1px solid var(--color-border);
+}
+
+/* Skip link — visible only on keyboard focus, per BUILD-PLAN.md Step 15 */
+.skip-link {
+	position: absolute;
+	top: -3rem;
+	left: 1rem;
+	z-index: 210;
+	background: var(--color-surface);
+	color: var(--color-text);
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-md);
+	padding: 0.5rem 1rem;
+	transition: top 0.2s ease-out;
+}
+
+.skip-link:focus-visible {
+	top: 1rem;
+}
+
+/* The primary/secondary/ghost button — global (not scoped) so both
+   Button.astro and React islands (e.g. ContactForm.tsx) can share the exact
+   same classes instead of duplicating this CSS per framework. */
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	justify-content: center;
+	border-radius: 9999px;
+	font-family: var(--font-body);
+	font-weight: 500;
+	font-size: 0.9375rem;
+	letter-spacing: -0.005em;
+	line-height: 1;
+	padding: 0.75rem 1.5rem;
+	border: 1px solid transparent;
+	transition:
+		filter 0.2s ease-out,
+		box-shadow 0.2s ease-out,
+		transform 0.1s ease-out,
+		background-color 0.2s ease-out,
+		border-color 0.2s ease-out,
+		color 0.2s ease-out;
+	cursor: pointer;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.btn[data-size='sm'] {
+	padding: 0.5rem 1.125rem;
+	font-size: 0.875rem;
+}
+
+.btn[data-variant='primary'] {
+	background: var(--color-text);
+	border-color: var(--color-text);
+	color: var(--color-base);
+}
+
+.btn[data-variant='primary']:hover {
+	background: var(--color-text-muted);
+	border-color: var(--color-text-muted);
+}
+
+.btn[data-variant='primary']:active {
+	transform: translateY(1px);
+}
+
+.btn[data-variant='secondary'] {
+	background: var(--color-surface);
+	border-color: var(--color-border);
+	color: var(--color-text);
+}
+
+.btn[data-variant='secondary']:hover {
+	background: var(--color-elevated);
+	border-color: var(--color-border-strong);
+}
+
+.btn[data-variant='secondary']:active,
+.btn[data-variant='ghost']:active {
+	transform: translateY(1px);
+}
+
+.btn[data-variant='ghost'] {
+	background: transparent;
+	border-color: transparent;
+	color: var(--color-text-muted);
+	padding-inline: 0;
+}
+
+.btn[data-variant='ghost']:hover {
+	color: var(--color-text);
+}
+
+.btn__arrow {
+	transition: transform 0.2s ease-out;
+}
+
+.btn:hover .btn__arrow {
+	transform: translate(2px, -2px);
+}
+
+.btn:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+}
+
+.btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+/* Card.astro's root element uses a dynamic tag (`const Tag = as`), which Astro
+   compiles as a component invocation rather than a plain element — that emits
+   TWO "class" attributes (one for class:list, one for the scope hash), and
+   per the HTML spec the second is silently dropped, along with the component's
+   own scope hash. Its scoped styles would therefore never match. Global (not
+   scoped) is the reliable fix — same reasoning as .btn above. */
+.card {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--color-border);
+	background: var(--color-surface);
+	box-shadow: var(--card-shadow);
+	transition:
+		background-color 0.2s ease-out,
+		border-color 0.2s ease-out,
+		box-shadow 0.2s ease-out,
+		transform 0.2s ease-out;
+}
+
+/* Lit top edge — a hairline that catches light in the middle and fades at the
+   corners. This is what makes dark cards read as physical panels instead of
+   flat grey rectangles, and it's on nearly every card in the references. */
+.card::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 1px;
+	z-index: 2;
+	background: linear-gradient(90deg, transparent, var(--edge-highlight) 50%, transparent);
+}
+
+.card--hover:hover {
+	background: var(--color-elevated);
+	border-color: var(--color-border-strong);
+	transform: translateY(-2px);
+}
+
+.card__content {
+	position: relative;
+	z-index: 1;
+	height: 100%;
+}
+
+/* Project and post cards pass hover={false} because the anchor wraps the whole
+   card — this gives them the same lift without each component repeating it. */
+a:hover > .card {
+	border-color: var(--color-border-strong);
+	transform: translateY(-2px);
+}
+
+/* Blog post / case study body copy. Scoped to .prose so this never leaks
+   into cards or other components that also render arbitrary markdown. */
+.prose {
+	font-size: 1.0625rem;
+	line-height: 1.75;
+	color: var(--color-text-muted);
+}
+
+.prose > * + * {
+	margin-top: 1.25em;
+}
+
+.prose h2 {
+	font-family: var(--font-display);
+	font-weight: 700;
+	font-size: 1.625rem;
+	letter-spacing: -0.02em;
+	line-height: 1.25;
+	color: var(--color-text);
+	margin-top: 2.25em;
+}
+
+.prose h3 {
+	font-family: var(--font-display);
+	font-weight: 500;
+	font-size: 1.25rem;
+	letter-spacing: -0.015em;
+	color: var(--color-text);
+	margin-top: 2em;
+}
+
+.prose a {
+	color: var(--color-accent);
+	text-decoration: underline;
+	text-decoration-color: var(--color-border-strong);
+	text-underline-offset: 2px;
+}
+
+.prose a:hover {
+	text-decoration-color: currentColor;
+}
+
+.prose ul,
+.prose ol {
+	padding-left: 1.25em;
+}
+
+.prose li + li {
+	margin-top: 0.5em;
+}
+
+.prose img {
+	border-radius: var(--radius-lg);
+}
+
+.prose pre {
+	padding: 1.25rem;
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--color-border);
+	background: var(--color-surface) !important;
+	overflow-x: auto;
+	font-size: 0.875rem;
+	line-height: 1.6;
+}
+
+/*
+ * Syntax highlighting. astro.config.mjs uses Shiki dual themes with
+ * defaultColor:false, so each token carries --shiki-light and --shiki-dark
+ * custom properties and no baked-in colour. We pick one here, and keep our own
+ * surface colour for the code block background so it matches the design system
+ * rather than the theme's own background.
+ *
+ * Targets `pre span` rather than Shiki's wrapper class so it keeps working if
+ * that class name ever changes.
+ */
+.prose pre span {
+	color: var(--shiki-dark);
+}
+
+@media (prefers-color-scheme: light) {
+	.prose pre span {
+		color: var(--shiki-light);
+	}
+}
+
+.prose code {
+	font-size: 0.875em;
+}
+
+.prose :not(pre) > code {
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-sm);
+	padding: 0.125em 0.375em;
+}
+
+/* Reveal primitives — see BUILD-PLAN.md §1.6 and Step 5. Initial hidden state
+   is CSS so there's no flash of positioned content before motion.ts runs, and
+   it's scoped to no-preference so reduced-motion users never see it hidden. */
+@media (prefers-reduced-motion: no-preference) {
+	[data-reveal] {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	[data-reveal-stagger] > *,
+	[data-reveal-load] > * {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+}
+
+/* Gradient mesh drift — CSS only, never GSAP. See GradientMesh.astro. */
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes mesh-drift-a {
+		from {
+			transform: translate3d(-4%, -6%, 0) scale(1);
+		}
+		to {
+			transform: translate3d(4%, 5%, 0) scale(1.08);
+		}
+	}
+	@keyframes mesh-drift-b {
+		from {
+			transform: translate3d(5%, 4%, 0) scale(1.05);
+		}
+		to {
+			transform: translate3d(-5%, -3%, 0) scale(0.96);
+		}
+	}
+	@keyframes mesh-drift-c {
+		from {
+			transform: translate3d(-3%, 5%, 0) scale(0.98);
+		}
+		to {
+			transform: translate3d(3%, -4%, 0) scale(1.06);
+		}
+	}
+	@keyframes portrait-float {
+		from {
+			transform: translate3d(0, -6px, 0);
+		}
+		to {
+			transform: translate3d(0, 6px, 0);
+		}
+	}
+}

@@ -1,0 +1,177 @@
+---
+import { useTranslations } from '../../i18n';
+import { CONTACT_EMAIL, SOCIALS, OWNER_NAME } from '../../consts';
+import Container from '../ui/Container.astro';
+import Divider from '../ui/Divider.astro';
+import LocaleSwitcher from './LocaleSwitcher.astro';
+
+const t = useTranslations();
+const year = new Date().getFullYear();
+
+const socialLinks = [
+	{ label: 'GitHub', href: SOCIALS.github },
+	{ label: 'LinkedIn', href: SOCIALS.linkedin },
+	{ label: 'X', href: SOCIALS.x },
+].filter((s) => s.href);
+---
+
+<footer class="footer">
+	<Container wide class="footer__grid">
+		<div class="footer__col">
+			<div class="footer__contact">
+				<a href={`mailto:${CONTACT_EMAIL}`} class="footer__contact-link">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+						<path
+							d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm0 0 8 7 8-7"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+					{CONTACT_EMAIL}
+				</a>
+			</div>
+			{
+				socialLinks.length > 0 && (
+					<p class="footer__socials">
+						{socialLinks.map((social, i) => (
+							<>
+								{i > 0 && ' · '}
+								<a href={social.href} target="_blank" rel="noopener noreferrer">
+									{social.label}
+								</a>
+							</>
+						))}
+					</p>
+				)
+			}
+		</div>
+	</Container>
+
+	<Container wide>
+		<Divider class="my-8" />
+	</Container>
+
+	<Container wide class="footer__bottom">
+		<p class="footer__copyright">© {year} {OWNER_NAME}</p>
+		<div class="footer__bottom-right">
+			<a href="/privacy" class="footer__privacy">{t.footer.privacy}</a>
+			<LocaleSwitcher />
+		</div>
+	</Container>
+
+	<p class="footer__flourish" aria-hidden="true">brsjsk</p>
+</footer>
+
+<style>
+	.footer {
+		position: relative;
+		overflow: hidden;
+		border-top: 1px solid var(--color-border);
+		padding-block: clamp(3.5rem, 8vw, 5rem) 2rem;
+	}
+
+	/* The containers are static, so this keeps the footer content above the
+	   absolutely-positioned wordmark flourish. */
+	.footer :global(.u-container) {
+		position: relative;
+		z-index: 1;
+	}
+
+	.footer__grid {
+		display: grid;
+	}
+
+	.footer__col {
+		display: flex;
+		flex-direction: column;
+		gap: 0.875rem;
+	}
+
+	.footer__contact {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.footer__contact-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.9375rem;
+		color: var(--color-text-muted);
+		text-decoration: none;
+		transition: color 0.15s ease-out;
+	}
+
+	.footer__contact-link svg {
+		width: 1rem;
+		height: 1rem;
+		flex-shrink: 0;
+	}
+
+	.footer__contact-link:hover {
+		color: var(--color-text);
+	}
+
+	.footer__socials {
+		font-size: 0.875rem;
+		color: var(--color-text-subtle);
+	}
+
+	.footer__socials a {
+		color: var(--color-text-muted);
+		text-decoration: none;
+	}
+
+	.footer__socials a:hover {
+		color: var(--color-text);
+	}
+
+	.footer__bottom {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.footer__copyright {
+		font-size: 0.8125rem;
+		color: var(--color-text-subtle);
+	}
+
+	.footer__bottom-right {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.footer__privacy {
+		font-size: 0.8125rem;
+		color: var(--color-text-subtle);
+		text-decoration: none;
+		transition: color 0.15s ease-out;
+	}
+
+	.footer__privacy:hover {
+		color: var(--color-text);
+	}
+
+	.footer__flourish {
+		position: absolute;
+		bottom: -3.5rem;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 100%;
+		text-align: center;
+		font-family: var(--font-display);
+		font-weight: 900;
+		font-size: clamp(4rem, 22vw, 14rem);
+		line-height: 1;
+		letter-spacing: -0.04em;
+		color: var(--color-text);
+		opacity: var(--flourish-opacity);
+		white-space: nowrap;
+		pointer-events: none;
+		user-select: none;
+	}
+</style>

@@ -1,0 +1,17 @@
+---
+interface Props {
+	class?: string;
+	hover?: boolean;
+	as?: string;
+}
+
+const { class: className, hover = true, as = 'div' } = Astro.props;
+const Tag = as;
+---
+
+<Tag class:list={['card', hover && 'card--hover', className]}>
+	<slot name="gradient" />
+	<div class="card__content">
+		<slot />
+	</div>
+</Tag>

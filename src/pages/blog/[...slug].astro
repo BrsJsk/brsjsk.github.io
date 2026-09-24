@@ -1,0 +1,127 @@
+---
+export const prerender = true;
+
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { useTranslations } from '../../i18n';
+import { getPublishedPosts, readingTime, formatDate } from '../../lib/blog';
+import Reveal from '../../components/motion/Reveal.astro';
+import Divider from '../../components/ui/Divider.astro';
+
+export async function getStaticPaths() {
+	const posts = await getPublishedPosts();
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const t = useTranslations();
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Article',
+	headline: post.data.title,
+	description: post.data.description,
+	datePublished: post.data.pubDate.toISOString(),
+	dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+};
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" is:inline />
+
+	<article class="blog-post u-section">
+		<div class="u-narrow">
+			<Reveal class="blog-post__header">
+				<a href="/blog" class="blog-post__back">← {t.blog.backToWriting}</a>
+				<p class="blog-post__meta">
+					{formatDate(post.data.pubDate)} · {readingTime(post.body ?? '')} min read
+				</p>
+				<h1 class="blog-post__title">{post.data.title}</h1>
+			</Reveal>
+
+			<Divider class="my-8" />
+
+			{
+				post.data.cover && (
+					<Reveal class="blog-post__cover">
+						<Image src={post.data.cover} alt={post.data.title} width={1200} height={750} />
+					</Reveal>
+				)
+			}
+
+			<Reveal as="div" class="prose">
+				<Content />
+			</Reveal>
+
+			{
+				post.data.tags.length > 0 && (
+					<>
+						<Divider class="my-8" />
+						<p class="blog-post__tags">{post.data.tags.map((tag) => `#${tag}`).join('  ')}</p>
+					</>
+				)
+			}
+
+			<a href="/blog" class="blog-post__back blog-post__back--footer">← {t.blog.backToWriting}</a>
+		</div>
+	</article>
+</BaseLayout>
+
+<style>
+	.blog-post__header {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.blog-post__back {
+		font-size: 0.875rem;
+		color: var(--color-text-muted);
+		text-decoration: none;
+	}
+
+	.blog-post__back:hover {
+		color: var(--color-text);
+	}
+
+	.blog-post__back--footer {
+		display: inline-block;
+		margin-top: 2.5rem;
+	}
+
+	.blog-post__meta {
+		font-size: 0.8125rem;
+		color: var(--color-text-subtle);
+	}
+
+	.blog-post__title {
+		font-size: clamp(1.75rem, 4vw, 2.5rem);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		line-height: 1.15;
+		color: var(--color-text);
+	}
+
+	.blog-post__cover {
+		display: block;
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		margin-bottom: 2rem;
+	}
+
+	.blog-post__cover :global(img) {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	.blog-post__tags {
+		font-size: 0.875rem;
+		color: var(--color-text-subtle);
+	}
+</style>

@@ -1,0 +1,29 @@
+---
+// The single reveal mechanism for the whole site — see BUILD-PLAN.md §1.6 and Step 5.
+// Do not write ad-hoc GSAP in pages; wrap content in this instead.
+interface Props {
+	/** P2 — reveal children with a 60ms stagger, instead of revealing this element as one unit. */
+	stagger?: boolean;
+	/** P3 — hero-only load animation. No ScrollTrigger, fires on page load with an 80ms stagger. */
+	load?: boolean;
+	/** Delay in seconds, only meaningful for a plain (non-stagger, non-load) reveal. */
+	delay?: number;
+	as?: string;
+	class?: string;
+	[attr: string]: unknown;
+}
+
+const { stagger = false, load = false, delay, as = 'div', class: className, ...rest } = Astro.props;
+const Tag = as;
+---
+
+<Tag
+	{...rest}
+	class:list={[className]}
+	data-reveal={!stagger && !load ? true : undefined}
+	data-reveal-stagger={stagger ? true : undefined}
+	data-reveal-load={load ? true : undefined}
+	data-reveal-delay={delay}
+>
+	<slot />
+</Tag>

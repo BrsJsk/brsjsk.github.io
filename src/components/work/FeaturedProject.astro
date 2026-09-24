@@ -1,0 +1,162 @@
+---
+// A large, deliberately more prominent project showcase — used for in-house
+// products, which need more room than a grid card to explain what they are.
+// Alternates image side so multiple instances don't read as a list of clones.
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { useTranslations } from '../../i18n';
+import Button from '../ui/Button.astro';
+import GradientMesh from '../ui/GradientMesh.astro';
+import Reveal from '../motion/Reveal.astro';
+
+interface Props {
+	project: CollectionEntry<'projects'>;
+	/** Flips the image to the right on wide screens. */
+	reverse?: boolean;
+}
+
+const { project, reverse = false } = Astro.props;
+const t = useTranslations();
+---
+
+<Reveal class:list={['featured-project', reverse && 'featured-project--reverse']}>
+	<div class="featured-project__visual">
+		<GradientMesh variant="glow" opacity={0.22} />
+		<div class="featured-project__frame">
+			<Image src={project.data.cover} alt={project.data.title} width={900} height={563} />
+		</div>
+	</div>
+
+	<div class="featured-project__body">
+		<p class="featured-project__label">{t.inHouse.label}</p>
+		<h3 class="featured-project__title">{project.data.title}</h3>
+		{project.data.summary && <p class="featured-project__summary">{project.data.summary}</p>}
+
+		{
+			project.data.metrics.length > 0 && (
+				<dl class="featured-project__metrics">
+					{project.data.metrics.slice(0, 3).map((metric) => (
+						<div>
+							<dt class="featured-project__metric-label">{metric.label}</dt>
+							<dd class="featured-project__metric-value">{metric.value}</dd>
+						</div>
+					))}
+				</dl>
+			)
+		}
+
+		<div class="featured-project__actions">
+			<Button href={`/work/${project.id}`} variant="secondary" arrow>{t.inHouse.viewProject}</Button>
+			{
+				project.data.liveUrl && (
+					<Button href={project.data.liveUrl} variant="ghost" arrow>
+						{t.work.visitSite}
+					</Button>
+				)
+			}
+		</div>
+	</div>
+</Reveal>
+
+<style>
+	.featured-project {
+		display: grid;
+		grid-template-columns: 7fr 5fr;
+		gap: clamp(2rem, 5vw, 4rem);
+		align-items: center;
+	}
+
+	.featured-project--reverse .featured-project__visual {
+		order: 2;
+	}
+
+	.featured-project__visual {
+		position: relative;
+	}
+
+	.featured-project__frame {
+		position: relative;
+		z-index: 1;
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--color-border);
+		overflow: hidden;
+	}
+
+	.featured-project__frame :global(img) {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	.featured-project__body {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.featured-project__label {
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-text-subtle);
+	}
+
+	.featured-project__title {
+		font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+		font-weight: 700;
+		line-height: 1.15;
+		letter-spacing: -0.025em;
+		color: var(--color-text);
+	}
+
+	.featured-project__summary {
+		font-size: 1rem;
+		line-height: 1.65;
+		color: var(--color-text-muted);
+		max-width: 46ch;
+	}
+
+	.featured-project__metrics {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		margin: 0.25rem 0 0;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--color-border);
+		width: 100%;
+	}
+
+	.featured-project__metric-label {
+		font-size: 0.8125rem;
+		color: var(--color-text-subtle);
+		margin-bottom: 0.25rem;
+	}
+
+	.featured-project__metric-value {
+		font-family: var(--font-display);
+		font-weight: 700;
+		font-size: 1.5rem;
+		letter-spacing: -0.02em;
+		color: var(--color-text);
+		margin: 0;
+	}
+
+	.featured-project__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 0.5rem;
+	}
+
+	@media (max-width: 1024px) {
+		.featured-project {
+			grid-template-columns: 1fr;
+			gap: 2rem;
+		}
+		.featured-project--reverse .featured-project__visual {
+			order: 0;
+		}
+	}
+</style>

@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n';
+import SectionHeading from '../ui/SectionHeading.astro';
+import FeaturedProject from '../work/FeaturedProject.astro';
+
+const t = useTranslations();
+
+const projects = (await getCollection('projects', ({ data }) => data.inHouse)).sort(
+	(a, b) => a.data.order - b.data.order,
+);
+---
+
+{
+	projects.length > 0 && (
+		<section class="in-house u-section">
+			<div class="u-container">
+				<SectionHeading title={t.inHouse.title} />
+				<div class="in-house__list">
+					{projects.map((project, i) => (
+						<FeaturedProject project={project} reverse={i % 2 === 1} />
+					))}
+				</div>
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.in-house__list {
+		display: flex;
+		flex-direction: column;
+		gap: clamp(3rem, 8vw, 5rem);
+		margin-top: 3rem;
+	}
+</style>

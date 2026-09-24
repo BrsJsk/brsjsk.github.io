@@ -1,0 +1,65 @@
+---
+export const prerender = true;
+
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { useTranslations } from '../../i18n';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import ProjectFilter from '../../components/work/ProjectFilter';
+import ProjectCard from '../../components/work/ProjectCard.astro';
+
+const t = useTranslations();
+
+const projects = (await getCollection('projects')).sort((a, b) => {
+	if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+	return a.data.order - b.data.order;
+});
+
+const categories = [
+	{ key: 'all', label: t.work.filters.all },
+	{ key: 'website', label: t.work.filters.website },
+	{ key: 'web-app', label: t.work.filters['web-app'] },
+	{ key: 'mobile-app', label: t.work.filters['mobile-app'] },
+];
+---
+
+<BaseLayout title={t.work.indexTitle}>
+	<section class="u-section">
+		<div class="u-container work-index">
+			<SectionHeading title={t.work.indexTitle} lead={t.work.indexLead} />
+
+			<noscript>
+				<style>
+					.project-filter {
+						display: none;
+					}
+				</style>
+			</noscript>
+			<ProjectFilter client:visible categories={categories} totalCount={projects.length} />
+
+			<div class="work-index__grid">
+				{projects.map((project) => <ProjectCard project={project} />)}
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.work-index {
+		display: flex;
+		flex-direction: column;
+		gap: 2.5rem;
+	}
+
+	.work-index__grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 2rem;
+	}
+
+	@media (max-width: 768px) {
+		.work-index__grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

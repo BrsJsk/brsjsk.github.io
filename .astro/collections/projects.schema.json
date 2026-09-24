@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "client": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "year": {
+      "type": "number"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "website",
+        "web-app",
+        "mobile-app"
+      ]
+    },
+    "role": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stack": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cover": {
+      "type": "string"
+    },
+    "gallery": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "videoUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "liveUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "metrics": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "value"
+        ]
+      }
+    },
+    "testimonial": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "collection": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "collection"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string"
+            },
+            "collection": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "slug",
+            "collection"
+          ]
+        }
+      ]
+    },
+    "featured": {
+      "default": false,
+      "type": "boolean"
+    },
+    "inHouse": {
+      "default": false,
+      "type": "boolean"
+    },
+    "order": {
+      "default": 0,
+      "type": "number"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "cover"
+  ]
+}

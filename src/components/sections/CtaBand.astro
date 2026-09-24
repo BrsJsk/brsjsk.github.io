@@ -1,0 +1,52 @@
+---
+import { useTranslations } from '../../i18n';
+import Reveal from '../motion/Reveal.astro';
+import GradientMesh from '../ui/GradientMesh.astro';
+import Button from '../ui/Button.astro';
+
+const t = useTranslations();
+---
+
+<section class="cta-band">
+	<GradientMesh variant="hero" opacity={0.2} />
+	<div class="u-container">
+		<Reveal class="cta-band__inner">
+			<h2 class="cta-band__title">{t.ctaBand.title}</h2>
+			<p class="cta-band__lead">{t.ctaBand.lead}</p>
+			<Button href="/contact" variant="primary" arrow>{t.ctaBand.cta}</Button>
+		</Reveal>
+	</div>
+</section>
+
+<style>
+	.cta-band {
+		position: relative;
+		overflow: hidden;
+		padding-block: clamp(7.5rem, 18vw, 13.5rem);
+	}
+
+	.cta-band__inner {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.25rem;
+		text-align: center;
+	}
+
+	.cta-band__title {
+		font-size: clamp(2rem, 4vw, 3.25rem);
+		font-weight: 700;
+		line-height: 1.05;
+		letter-spacing: -0.03em;
+		color: var(--color-text);
+	}
+
+	.cta-band__lead {
+		max-width: 48ch;
+		font-size: clamp(1rem, 1.4vw, 1.1875rem);
+		line-height: 1.6;
+		color: var(--color-text-muted);
+	}
+</style>

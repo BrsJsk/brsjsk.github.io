@@ -1,0 +1,20 @@
+---
+interface Props {
+	label?: string;
+	class?: string;
+}
+
+const { label, class: className } = Astro.props;
+---
+
+{
+	label ? (
+		<div class:list={['flex items-center gap-4', className]}>
+			<span class="h-px flex-1 bg-[var(--color-border)]"></span>
+			<span class="text-xs uppercase tracking-[0.08em] text-[var(--color-text-subtle)]">{label}</span>
+			<span class="h-px flex-1 bg-[var(--color-border)]"></span>
+		</div>
+	) : (
+		<hr class:list={['border-0', 'h-px', 'bg-[var(--color-border)]', className]} />
+	)
+}

@@ -1,0 +1,43 @@
+---
+// A subtle grid pattern used to set a section apart from the rest of the page
+// without introducing a new colour. Uses --color-border via currentColor and
+// fades out at the edges so it never hard-cuts against the page background.
+//
+// aria-hidden + focusable="false" because it's pure decoration — IE/Edge used
+// to put SVGs in the tab order without the latter.
+
+// Pattern ids must be unique per document, so each instance gets its own.
+let counter = 0;
+
+interface Props {
+	class?: string;
+	/** Grid cell size in px. */
+	size?: number;
+}
+
+const { class: className, size = 48 } = Astro.props;
+const id = `section-grid-${(counter += 1)}`;
+---
+
+<svg class:list={['pattern', className]} aria-hidden="true" focusable="false">
+	<defs>
+		<pattern id={id} width={size} height={size} patternUnits="userSpaceOnUse">
+			<path d={`M ${size} 0 L 0 0 0 ${size}`} fill="none" stroke="currentColor" stroke-width="1"></path>
+		</pattern>
+	</defs>
+	<rect width="100%" height="100%" fill={`url(#${id})`}></rect>
+</svg>
+
+<style>
+	.pattern {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		color: var(--color-border);
+		pointer-events: none;
+		z-index: 0;
+		-webkit-mask-image: radial-gradient(ellipse 65% 55% at 50% 45%, black 20%, transparent 78%);
+		mask-image: radial-gradient(ellipse 65% 55% at 50% 45%, black 20%, transparent 78%);
+	}
+</style>

@@ -1,0 +1,73 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useTranslations } from '../i18n';
+import GradientMesh from '../components/ui/GradientMesh.astro';
+import Button from '../components/ui/Button.astro';
+import Reveal from '../components/motion/Reveal.astro';
+
+const t = useTranslations();
+---
+
+<BaseLayout title={t.notFound.title} noindex>
+	<section class="not-found">
+		<GradientMesh variant="hero" opacity={0.3} />
+		<div class="u-container not-found__inner">
+			<Reveal class="not-found__stack">
+				<h1 class="not-found__title">{t.notFound.title}</h1>
+				<p class="not-found__lead">{t.notFound.lead}</p>
+				<div class="not-found__actions">
+					<Button href="/" variant="primary" arrow>{t.notFound.home}</Button>
+					<Button href="/work" variant="secondary">{t.notFound.work}</Button>
+				</div>
+			</Reveal>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.not-found {
+		position: relative;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		min-height: 70vh;
+		padding-block: clamp(4rem, 10vw, 6rem);
+	}
+
+	.not-found__inner {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+	}
+
+	.not-found__stack {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.25rem;
+		text-align: center;
+	}
+
+	.not-found__title {
+		font-size: clamp(2.25rem, 5vw, 3.5rem);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		color: var(--color-text);
+	}
+
+	.not-found__lead {
+		max-width: 40ch;
+		font-size: 1.0625rem;
+		color: var(--color-text-muted);
+	}
+
+	.not-found__actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1rem;
+		margin-top: 0.5rem;
+	}
+</style>

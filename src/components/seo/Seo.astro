@@ -1,0 +1,45 @@
+---
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '../../consts';
+
+interface Props {
+	title: string;
+	description?: string;
+	image?: string;
+	noindex?: boolean;
+}
+
+const { title, description = SITE_DESCRIPTION, image, noindex = false } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? SITE_URL);
+const ogImageURL = new URL(image ?? '/og-default.png', Astro.site ?? SITE_URL);
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'ProfessionalService',
+	name: SITE_NAME,
+	description: SITE_DESCRIPTION,
+	url: SITE_URL,
+	areaServed: {
+		'@type': 'Place',
+		name: 'Worldwide',
+	},
+};
+---
+
+<link rel="canonical" href={canonicalURL} />
+<meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:image" content={ogImageURL} />
+<meta property="og:site_name" content={SITE_NAME} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL} />
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />

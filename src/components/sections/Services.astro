@@ -1,0 +1,108 @@
+---
+import { useTranslations } from '../../i18n';
+import Reveal from '../motion/Reveal.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Card from '../ui/Card.astro';
+import GradientMesh from '../ui/GradientMesh.astro';
+
+const t = useTranslations();
+
+// Rendered as real <svg> elements below, NOT via set:html — content injected
+// with set:html doesn't receive Astro's scope class, so scoped rules like
+// `.services__icon svg { width: ... }` would never match and the icon would
+// render at the browser's default SVG size.
+const icons = [
+	// Marketing sites — browser window
+	'M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5Zm0 4h18M7 5.5h.01',
+	// Web apps — layout grid
+	'M4 4h7v7H4V4Zm9 0h7v4h-7V4Zm0 7h7v9h-7v-9ZM4 14h7v6H4v-6Z',
+	// Mobile apps — phone
+	'M8 3h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 16h2',
+];
+---
+
+<section class="services u-section">
+	<div class="u-container">
+		<SectionHeading title={t.services.title} />
+
+		<Reveal stagger class="services__grid">
+			{
+				t.services.items.map((item, i) => (
+					<Card class="services__card">
+						<GradientMesh slot="gradient" variant="card" />
+						<div class="services__icon">
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								aria-hidden="true"
+							>
+								<path d={icons[i]} />
+							</svg>
+						</div>
+						<h3 class="services__title">{item.title}</h3>
+						<p class="services__description">{item.description}</p>
+					</Card>
+				))
+			}
+		</Reveal>
+	</div>
+</section>
+
+<style>
+	.services__grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.5rem;
+		margin-top: 3rem;
+	}
+
+	/* Padding lives on .card__content, not the card root — the root is also the
+	   positioning context for the corner gradient, which should bleed to the
+	   edge rather than be inset by padding. */
+	.services__card :global(.card__content) {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1.75rem;
+	}
+
+	.services__icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border-radius: var(--radius-md);
+		border: 1px solid var(--color-border);
+		color: var(--color-accent);
+	}
+
+	.services__icon svg {
+		width: 1.375rem;
+		height: 1.375rem;
+	}
+
+	.services__title {
+		font-size: 1.25rem;
+		font-weight: 500;
+		letter-spacing: -0.015em;
+		line-height: 1.3;
+		color: var(--color-text);
+	}
+
+	.services__description {
+		font-size: 1rem;
+		line-height: 1.65;
+		color: var(--color-text-muted);
+	}
+
+	@media (max-width: 768px) {
+		.services__grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

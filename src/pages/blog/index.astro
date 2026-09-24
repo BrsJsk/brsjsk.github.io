@@ -1,0 +1,133 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { useTranslations } from '../../i18n';
+import { getPublishedPosts, readingTime, formatDate } from '../../lib/blog';
+import Button from '../../components/ui/Button.astro';
+import Reveal from '../../components/motion/Reveal.astro';
+import Divider from '../../components/ui/Divider.astro';
+
+const t = useTranslations();
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title={t.blog.title}>
+	<section class="blog-index u-section">
+		<div class="u-narrow">
+			<Reveal class="blog-index__header">
+				<h1 class="blog-index__title">{t.blog.title}</h1>
+			</Reveal>
+
+			{
+				posts.length === 0 ? (
+					<Reveal class="blog-index__empty">
+						<p class="blog-index__empty-title">{t.blog.emptyTitle}</p>
+						<p class="blog-index__empty-lead">{t.blog.emptyLead}</p>
+						<Button href="/work" variant="secondary" arrow>
+							{t.blog.emptyCta}
+						</Button>
+					</Reveal>
+				) : (
+					<div class="blog-index__list">
+						{posts.map((post, i) => (
+							<>
+								{i > 0 && <Divider />}
+								<Reveal as="a" href={`/blog/${post.id}`} class="blog-index__item">
+									<p class="blog-index__meta">
+										{formatDate(post.data.pubDate)} · {readingTime(post.body ?? '')} min
+									</p>
+									<h2 class="blog-index__item-title">{post.data.title}</h2>
+									<p class="blog-index__item-description">{post.data.description}</p>
+									{post.data.tags.length > 0 && (
+										<p class="blog-index__tags">{post.data.tags.map((tag) => `#${tag}`).join('  ')}</p>
+									)}
+								</Reveal>
+							</>
+						))}
+					</div>
+				)
+			}
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.blog-index__header {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin-bottom: 3rem;
+	}
+
+	.blog-index__title {
+		font-size: clamp(2rem, 4vw, 3rem);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		color: var(--color-text);
+	}
+
+	.blog-index__list {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.blog-index__item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding-block: 1.75rem;
+		text-decoration: none;
+	}
+
+	.blog-index__meta {
+		font-size: 0.8125rem;
+		color: var(--color-text-subtle);
+	}
+
+	.blog-index__item-title {
+		font-size: 1.375rem;
+		font-weight: 500;
+		letter-spacing: -0.015em;
+		color: var(--color-text);
+		transition: color 0.15s ease-out;
+	}
+
+	.blog-index__item:hover .blog-index__item-title {
+		color: var(--color-accent);
+	}
+
+	.blog-index__item-description {
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		color: var(--color-text-muted);
+	}
+
+	.blog-index__tags {
+		font-size: 0.8125rem;
+		color: var(--color-text-subtle);
+	}
+
+	.blog-index__empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		text-align: center;
+		padding-block: 4rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+	}
+
+	.blog-index__empty-title {
+		font-size: 1.375rem;
+		font-weight: 500;
+		color: var(--color-text);
+	}
+
+	.blog-index__empty-lead {
+		font-size: 0.9375rem;
+		color: var(--color-text-muted);
+	}
+</style>

@@ -1,0 +1,38 @@
+---
+import ArrowIcon from './ArrowIcon.astro';
+
+interface Props {
+	variant?: 'primary' | 'secondary' | 'ghost';
+	href?: string;
+	size?: 'sm' | 'md';
+	arrow?: boolean;
+	type?: 'button' | 'submit';
+	disabled?: boolean;
+	class?: string;
+}
+
+const {
+	variant = 'primary',
+	href,
+	size = 'md',
+	arrow = false,
+	type = 'button',
+	disabled = false,
+	class: className,
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+	href={href}
+	type={href ? undefined : type}
+	disabled={href ? undefined : disabled}
+	data-variant={variant}
+	data-size={size}
+	class:list={['btn', className]}
+>
+	<span class="btn__label"><slot /></span>
+	{arrow && <ArrowIcon class="btn__arrow" />}
+</Tag>
+

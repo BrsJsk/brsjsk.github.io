@@ -1,0 +1,54 @@
+---
+// A dot grid on a plane hinged at its bottom edge and tilted away from the
+// viewer, so it reads as a surface receding toward a horizon rather than flat
+// wallpaper. One element with a tiled radial-gradient plus a 3D transform —
+// no SVG markup and no per-dot nodes, so density costs nothing.
+//
+// Geometry note: perspective-origin is deliberately left at its default
+// (50% 50%), which puts the eye at the section's vertical centre — above the
+// plane's bottom hinge. Moving the eye down to the hinge height makes the
+// plane edge-on and therefore invisible.
+//
+// Pair with GradientMesh: the mesh supplies the light, this supplies structure.
+interface Props {
+	class?: string;
+	/** Dot spacing in px. Larger = sparser. */
+	gap?: number;
+	/** How hard the plane tilts away. Higher = flatter, more extreme recession. */
+	tilt?: number;
+	opacity?: number;
+}
+
+const { class: className, gap = 30, tilt = 68, opacity = 0.5 } = Astro.props;
+---
+
+<div class:list={['dotfield', className]} aria-hidden="true" style={`opacity:${opacity}`}>
+	<div class="dotfield__plane" style={`background-size:${gap}px ${gap}px; transform: rotateX(${tilt}deg)`}>
+	</div>
+</div>
+
+<style>
+	.dotfield {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		overflow: hidden;
+		pointer-events: none;
+		perspective: 340px;
+	}
+
+	.dotfield__plane {
+		position: absolute;
+		/* Overscanned horizontally so the tilted plane's corners never pull in
+		   from the edges of the section. */
+		left: -50%;
+		right: -50%;
+		bottom: 0;
+		height: 160%;
+		transform-origin: 50% 100%;
+		background-image: radial-gradient(circle, var(--dot-color) 1.2px, transparent 1.6px);
+		/* Dissolves toward the horizon instead of ending on a hard line. */
+		-webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.4) 45%, transparent 80%);
+		mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.4) 45%, transparent 80%);
+	}
+</style>

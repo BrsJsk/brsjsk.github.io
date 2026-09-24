@@ -1,0 +1,24 @@
+---
+// Fully built, but inert until a second locale exists. Flip SHOW_LOCALE_SWITCHER
+// in src/consts.ts once Bosnian (or any second locale) is added to astro.config.mjs.
+import { SHOW_LOCALE_SWITCHER } from '../../consts';
+import { dictionaries } from '../../i18n';
+
+const locales = Object.keys(dictionaries);
+const currentPath = Astro.url.pathname;
+---
+
+{
+	SHOW_LOCALE_SWITCHER && (
+		<div class="flex items-center gap-1 text-xs text-[var(--color-text-subtle)]">
+			{locales.map((locale, i) => (
+				<>
+					{i > 0 && <span aria-hidden="true">·</span>}
+					<a href={currentPath} class="uppercase hover:text-[var(--color-text)]" lang={locale}>
+						{locale}
+					</a>
+				</>
+			))}
+		</div>
+	)
+}

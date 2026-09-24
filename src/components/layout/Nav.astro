@@ -1,0 +1,166 @@
+---
+import { useTranslations } from '../../i18n';
+import Button from '../ui/Button.astro';
+import MobileMenu from './MobileMenu';
+
+const t = useTranslations();
+
+const links = [
+	{ label: t.nav.work, href: '/work' },
+	{ label: t.nav.about, href: '/#about' },
+	{ label: t.nav.contact, href: '/contact' },
+];
+---
+
+<header class="nav" id="site-nav">
+	<div class="u-container">
+		<div class="nav__bar">
+			<a href="/" class="nav__wordmark">brsjsk</a>
+
+			<nav class="nav__links" aria-label="Primary">
+				{links.map((link) => <a href={link.href}>{link.label}</a>)}
+			</nav>
+
+			<div class="nav__cta">
+				<Button href="/contact" variant="primary" size="sm" arrow>{t.nav.cta}</Button>
+			</div>
+
+			<MobileMenu
+				client:load
+				links={links}
+				ctaLabel={t.nav.cta}
+				ctaHref="/contact"
+				openLabel={t.nav.menuOpen}
+				closeLabel={t.nav.menuClose}
+			/>
+		</div>
+	</div>
+</header>
+
+<script>
+	const header = document.getElementById('site-nav');
+	const onScroll = () => {
+		if (!header) return;
+		header.dataset.scrolled = window.scrollY > 40 ? 'true' : 'false';
+	};
+	onScroll();
+	window.addEventListener('scroll', onScroll, { passive: true });
+</script>
+
+<style>
+	.nav {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		padding-block: 1rem;
+	}
+
+	/* A detached, rounded bar rather than a full-width strip. This is the single
+	   clearest structural difference between the reference sites and a default
+	   template header, so it stays visible at rest instead of only on scroll. */
+	.nav__bar {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		height: 3.5rem;
+		padding-right: 0.5rem;
+		padding-left: 1.25rem;
+		border: 1px solid var(--color-border);
+		border-radius: 9999px;
+		transition: border-color 0.25s ease-out;
+	}
+
+	/* The translucent blurred backdrop lives on a pseudo-element, NOT on
+	   .nav__bar itself. backdrop-filter establishes a containing block for
+	   fixed-position descendants, which would anchor MobileMenu's full-screen
+	   overlay to this pill instead of the viewport. */
+	.nav__bar::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		border-radius: inherit;
+		background: var(--nav-bg);
+		backdrop-filter: blur(16px);
+		transition: background-color 0.25s ease-out;
+	}
+
+	/* Same lit top edge as the cards, so the nav belongs to the same system. */
+	.nav__bar::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 15%;
+		right: 15%;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, var(--edge-highlight-strong) 50%, transparent);
+	}
+
+	.nav[data-scrolled='true'] .nav__bar {
+		border-color: var(--color-border-strong);
+	}
+
+	.nav[data-scrolled='true'] .nav__bar::after {
+		background: var(--nav-bg-scrolled);
+	}
+
+	.nav__wordmark {
+		font-family: var(--font-display);
+		font-weight: 700;
+		font-size: 1.0625rem;
+		letter-spacing: -0.04em;
+		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.nav__links {
+		display: none;
+		align-items: center;
+		gap: 1.75rem;
+	}
+
+	.nav__links a {
+		position: relative;
+		color: var(--color-text-muted);
+		text-decoration: none;
+		font-size: 0.9375rem;
+		transition: color 0.15s ease-out;
+	}
+
+	.nav__links a:hover {
+		color: var(--color-text);
+	}
+
+	/* Understated underline on hover — reads as considered without adding
+	   another colour to the palette. */
+	.nav__links a::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -0.4rem;
+		height: 1px;
+		background: var(--color-border-strong);
+		transform: scaleX(0);
+		transition: transform 0.2s ease-out;
+	}
+
+	.nav__links a:hover::after {
+		transform: scaleX(1);
+	}
+
+	.nav__cta {
+		display: none;
+	}
+
+	@media (min-width: 1024px) {
+		.nav__links {
+			display: flex;
+		}
+		.nav__cta {
+			display: block;
+		}
+	}
+</style>

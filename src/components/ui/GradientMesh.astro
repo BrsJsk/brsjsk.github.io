@@ -1,0 +1,133 @@
+---
+// The signature background element. Layered blurred radial blobs, drifting
+// slowly via CSS keyframes defined in global.css. Never GSAP — this must
+// render and animate with zero JS dependency.
+interface Props {
+	variant?: 'hero' | 'glow' | 'card';
+	/** Overrides the variant's default opacity. Applied inline — a scoped
+	 * class from a parent can't win a specificity fight against the
+	 * variant's own [data-variant] rule, so this is the only reliable way
+	 * for a caller (e.g. CtaBand's dimmer wash) to override it. */
+	opacity?: number;
+	class?: string;
+}
+
+const { variant = 'hero', opacity, class: className } = Astro.props;
+---
+
+<div
+	class:list={['mesh', className]}
+	data-variant={variant}
+	aria-hidden="true"
+	style={opacity !== undefined ? `opacity: ${opacity}` : undefined}
+>
+	<span class="mesh__blob mesh__blob--a"></span>
+	<span class="mesh__blob mesh__blob--b"></span>
+	<span class="mesh__blob mesh__blob--c"></span>
+</div>
+
+<style>
+	.mesh {
+		position: absolute;
+		pointer-events: none;
+		z-index: 0;
+		overflow: hidden;
+	}
+
+	.mesh__blob {
+		position: absolute;
+		border-radius: 9999px;
+		will-change: transform;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.mesh__blob--a {
+			animation: mesh-drift-a 26s ease-in-out infinite alternate;
+		}
+		.mesh__blob--b {
+			animation: mesh-drift-b 30s ease-in-out infinite alternate;
+		}
+		.mesh__blob--c {
+			animation: mesh-drift-c 22s ease-in-out infinite alternate;
+		}
+	}
+
+	/* Hero: one concentrated glowing form behind the headline, not a wash
+	   covering the section — small, dense blobs, more dark space around them. */
+	.mesh[data-variant='hero'] {
+		inset: 0;
+		filter: blur(100px);
+		opacity: 0.32;
+	}
+	.mesh[data-variant='hero'] .mesh__blob--a {
+		inset: 8% auto auto 32%;
+		width: 30%;
+		height: 30%;
+		background: var(--color-accent);
+	}
+	.mesh[data-variant='hero'] .mesh__blob--b {
+		inset: 4% 30% auto auto;
+		width: 26%;
+		height: 26%;
+		background: var(--color-accent-violet);
+	}
+	.mesh[data-variant='hero'] .mesh__blob--c {
+		inset: 18% auto auto 46%;
+		width: 14%;
+		height: 14%;
+		background: var(--color-accent-cyan);
+	}
+
+	/* Glow: medium, behind the owner photo, opacity ~0.55, blur 80px */
+	.mesh[data-variant='glow'] {
+		inset: -10%;
+		filter: blur(80px);
+		opacity: 0.55;
+	}
+	.mesh[data-variant='glow'] .mesh__blob--a {
+		inset: 10% auto auto 10%;
+		width: 55%;
+		height: 55%;
+		background: var(--color-accent);
+	}
+	.mesh[data-variant='glow'] .mesh__blob--b {
+		inset: auto 5% 10% auto;
+		width: 50%;
+		height: 50%;
+		background: var(--color-accent-violet);
+	}
+	.mesh[data-variant='glow'] .mesh__blob--c {
+		inset: 35% 25% auto auto;
+		width: 25%;
+		height: 25%;
+		background: var(--color-accent-cyan);
+	}
+
+	/* Card: small, anchored top-right, opacity ~0.3, blur 60px */
+	.mesh[data-variant='card'] {
+		top: -20%;
+		right: -20%;
+		width: 70%;
+		height: 70%;
+		filter: blur(60px);
+		opacity: 0.3;
+	}
+	.mesh[data-variant='card'] .mesh__blob--a {
+		inset: 0 auto auto 20%;
+		width: 65%;
+		height: 65%;
+		background: var(--color-accent);
+	}
+	.mesh[data-variant='card'] .mesh__blob--b {
+		inset: auto 0 10% auto;
+		width: 55%;
+		height: 55%;
+		background: var(--color-accent-violet);
+	}
+	.mesh[data-variant='card'] .mesh__blob--c {
+		inset: 20% 10% auto auto;
+		width: 20%;
+		height: 20%;
+		background: var(--color-accent-cyan);
+	}
+</style>

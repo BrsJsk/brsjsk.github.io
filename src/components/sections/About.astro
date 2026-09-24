@@ -1,0 +1,58 @@
+---
+import { useTranslations } from '../../i18n';
+import Reveal from '../motion/Reveal.astro';
+import Button from '../ui/Button.astro';
+import PortraitGlow from '../about/PortraitGlow.astro';
+
+const t = useTranslations();
+---
+
+<section id="about" class="about u-section">
+	<div class="u-container about__grid">
+		<Reveal class="about__portrait">
+			<PortraitGlow />
+		</Reveal>
+
+		<Reveal stagger class="about__content">
+			<p class="about__statement">{t.about.statement}</p>
+			<Button href="/contact" variant="ghost" arrow class="about__cta">{t.about.cta}</Button>
+		</Reveal>
+	</div>
+</section>
+
+<style>
+	.about__grid {
+		display: grid;
+		grid-template-columns: 5fr 7fr;
+		gap: clamp(2rem, 5vw, 4rem);
+		align-items: center;
+	}
+
+	.about__content {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1.5rem;
+	}
+
+	.about__statement {
+		font-family: var(--font-display);
+		font-weight: 700;
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+		color: var(--color-text);
+		max-width: 24ch;
+	}
+
+	@media (max-width: 1024px) {
+		.about__grid {
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
+		}
+		.about__portrait {
+			max-width: 20rem;
+			margin-inline: auto;
+		}
+	}
+</style>

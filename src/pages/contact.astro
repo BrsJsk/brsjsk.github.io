@@ -1,0 +1,142 @@
+---
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { useTranslations } from '../i18n';
+import { CONTACT_EMAIL, SOCIALS, WEB3FORMS_ACCESS_KEY } from '../consts';
+import DotField from '../components/ui/DotField.astro';
+import Reveal from '../components/motion/Reveal.astro';
+import ContactForm from '../components/contact/ContactForm';
+
+const t = useTranslations();
+
+const socialLinks = [
+	{ label: 'GitHub', href: SOCIALS.github },
+	{ label: 'LinkedIn', href: SOCIALS.linkedin },
+	{ label: 'X', href: SOCIALS.x },
+].filter((s) => s.href);
+---
+
+<BaseLayout title={t.contact.title}>
+	<section class="contact u-section">
+		<DotField opacity={0.4} />
+		<div class="u-container contact__grid">
+			<Reveal class="contact__intro">
+				<h1 class="contact__title">{t.contact.title}</h1>
+				<p class="contact__lead">{t.contact.lead}</p>
+				<p class="contact__response">⏱ {t.contact.responseTime}</p>
+
+				<div class="contact__links">
+					<a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+					{
+						socialLinks.length > 0 && (
+							<p class="contact__socials">
+								{socialLinks.map((s, i) => (
+									<>
+										{i > 0 && ' · '}
+										<a href={s.href} target="_blank" rel="noopener noreferrer">
+											{s.label}
+										</a>
+									</>
+								))}
+							</p>
+						)
+					}
+				</div>
+			</Reveal>
+
+			<Reveal class="contact__form-wrap">
+				<ContactForm
+					client:load
+					accessKey={WEB3FORMS_ACCESS_KEY}
+					subject={t.contact.formSubject}
+					labels={{
+						name: t.contact.formName,
+						email: t.contact.formEmail,
+						message: t.contact.formMessage,
+						submit: t.contact.formSubmit,
+						submitting: t.contact.formSubmitting,
+					}}
+					errorMessages={t.contact.errors}
+					successTitle={t.contact.formSuccessTitle}
+					successReset={t.contact.formSuccessReset}
+					genericError={t.contact.formError}
+					notConfigured={t.contact.formNotConfigured}
+					email={CONTACT_EMAIL}
+				/>
+			</Reveal>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.contact {
+		position: relative;
+		overflow: hidden;
+	}
+
+	/* The grid is static, so this keeps it above the positioned DotField. */
+	.contact__grid {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template-columns: 5fr 7fr;
+		gap: clamp(2rem, 5vw, 4rem);
+		align-items: start;
+	}
+
+	.contact__intro {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.contact__title {
+		font-size: clamp(2.25rem, 4vw, 3rem);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		color: var(--color-text);
+	}
+
+	.contact__lead {
+		max-width: 42ch;
+		font-size: 1.0625rem;
+		line-height: 1.6;
+		color: var(--color-text-muted);
+	}
+
+	.contact__response {
+		font-size: 0.9375rem;
+		color: var(--color-text-muted);
+	}
+
+	.contact__links {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	.contact__links a {
+		color: var(--color-text-muted);
+		text-decoration: none;
+	}
+
+	.contact__links a:hover {
+		color: var(--color-text);
+	}
+
+	.contact__socials {
+		font-size: 0.9375rem;
+	}
+
+	.contact__form-wrap {
+		min-width: 20rem;
+	}
+
+	@media (max-width: 1024px) {
+		.contact__grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
